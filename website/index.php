@@ -19,9 +19,9 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <title>Cryptobreedables.com - Breed / Collect / Fight</title>
-        <meta name="keywords" content="Cryptobreedables, Cryptocurrency, Cryptocurrency Game, Crypto Game, Discord Game">
-        <meta name="description" content="Cryptobreedables is a text and image based driven game. Its as easy as it sounds. All actions can be done by reacting to the bot messages by clicking the emoji icons given on the events. You can fight, level up, collect some nice items and earn free crypto coins.">
+        <title>Cryptopets.coinpoolservices.com - Breed / Collect / Fight</title>
+        <meta name="keywords" content="coinpoolservices.com, Cryptocurrency, Cryptocurrency Game, Crypto Game, Discord Game">
+        <meta name="description" content="crypto.coinpoolservices.com is a text and image based driven game. Its as easy as it sounds. All actions can be done by reacting to the bot messages by clicking the emoji icons given on the events. You can fight, level up, collect some nice items and earn free crypto coins.">
         <link rel="apple-touch-icon" sizes="180x180" href="/images/favicons/apple-touch-icon.png">
         <link rel="icon" type="image/png" sizes="32x32" href="/images/favicons/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="/images/favicons/favicon-16x16.png">
@@ -158,7 +158,7 @@
                 <?php
                     }else{
                 ?>
-                    <p class="center"><span class="bold">Cryptobreedables</span> is a text and image based driven <span class="bold">Discord game</span>. Its as easy as it sounds. All actions can be done by reacting to the bot messages by clicking the emoji icons given on the events. You can fight, level up, collect nice items and <span class="bold">earn free crypto coins</span>.</p>
+                    <p class="center"><span class="bold">CoinPoolServices</span> is a text and image based driven <span class="bold">Discord game</span>. Its as easy as it sounds. All actions can be done by reacting to the bot messages by clicking the emoji icons given on the events. You can fight, level up, collect nice items and <span class="bold">earn free crypto coins</span>.</p>
                 <?php
                     }
                 ?>

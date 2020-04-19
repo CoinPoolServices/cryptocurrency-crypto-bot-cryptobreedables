@@ -1,6 +1,6 @@
 module.exports = {
   bot: {
-    version: "1.12.12", // Current bot version
+    version: "1.2.0", // Current bot version
     adminMode: false, // If enabled the bot only accepts commands from admins
     errorLogging: true, // Enable error logging to file cryptobreedables_error.log
     errorLoggingMaxFileSize: 5242880, // filesize in bytes
@@ -12,22 +12,22 @@ module.exports = {
     gameLoggingZipOldLogs: true, // After reaching max file zip old logs
     commandPrefix: "!", // Bot prefix to trigger the bot <- if symbol changed it needs to get allowed on check.js
     cooldownTime: 5, // Cooldown a user need to wait between commands in seconds
-    coinName: "CoinName",
-    coinSymbol: "Symbol", // e.g. BTC
+    coinName: "News24",
+    coinSymbol: "News24", // e.g. BTC
     botID: "XXX", // Bot ID - important else it react to own messages -> SAME AS FOR BASE BOT!
     adminIDs: ["XXX"], // This users IDs are able to use admin commands and bypass cooldowns -> SAME AS FOR BASE BOT!
     moderatorIDs: ["XXX","XXX"], // This users IDs are able to use moderator commands and bypass cooldowns
-    vipGroupName: "Cryptobreedables VIP", // This Group users are able to use vip commands and bypass cooldowns
+    vipGroupName: "News24 VIP", // This Group users are able to use vip commands and bypass cooldowns
     mentionGroup: "XXX", // Users joining this group (DISCORD GROUP ID) by command get mentioned on bot fights if mention command is enabled
     respondChannelIDs: ["XXX"], // Discord server channels IDs the bot does listen to and spawns battles and shops
     allowDM: true, // Allow or disable direct messages for commands to the bot with true or false
     botToken: "XXX", // Discord bot token -> SAME AS FOR BASE BOT!
     websiteApiKey: "12Cryptobreedables34",
-    websiteCreateImgLink: "https://domain.link/api/create_pet_image.php", // parameters on create image function
-    websiteImgLink: "https://domain.link/tmp/", // image + extenxion needs to get added
-    websiteIcon: "https://domain.link/images/favicons/favicon-32x32.png",
-    websiteLink: "domain.link",
-    websiteUserProfile: "https://domain.link/u/cryptobreedables/",
+    websiteCreateImgLink: "http://cryptopets.coinpoolservices.com/api/create_pet_image.php", // parameters on create image function
+    websiteImgLink: "http://cryptopets.coinpoolservices.com/tmp/", // image + extenxion needs to get added
+    websiteIcon: "http://cryptopets.coinpoolservices.com/images/favicons/favicon-32x32.png",
+    websiteLink: "http://cryptopets.coinpoolservices.com/",
+    websiteUserProfile: "http://cryptopets.coinpoolservices.com/u/news24/",
     commandIgnor: ["register","r","profile","p","balance","b","deposit","d","withdraw","w","stake","unstake","tip","rain","drop","history","update",,"donate","notify","version","start","stop","getdeposits","gd","creditdeposits","cd","getstakes","gs","creditstakes","cs","clear","c"] // commands to ignor because of other bots
   },
   mysql: {
@@ -127,20 +127,20 @@ module.exports = {
         enabled: true,
         cronTime: 300, // Cron time in seconds
       },
-      box: 5,
-      potion_red: 1, 
-      potion_green: 1,
-      divineshield: 2,
+      box: 1,
+      potion_red: .1, 
+      potion_green: .1,
+      divineshield: .2,
       reddragon: 20,
-      blackdragon: 25,
-      egg: 100,
+      blackdragon: 40,
+      egg: 10,
     },
     jackpot: {
       enabled: true,
       percentage: 10
     },
     chatIcons: {
-      coins: "<:btc:701228640683294721>",
+      coins: "<:news24:701237513557114981>",
       jackpot: "<:jackpot:698993994293706852>"
     },
   },
@@ -166,7 +166,7 @@ module.exports = {
     },
     chatIcons: {
       sword: "<:sword:698993994318741525>",
-      coins: "<:btc:701228640683294721>",
+      coins: "<:news24:701237513557114981>",
       jackpot: "<:jackpot:698993994293706852>",
       box: "<:box:698993994243244075>",
       egg: "<:egg:573069966119665689>",
@@ -202,13 +202,13 @@ module.exports = {
     victory_img: "victory.png",
     defense_img: "defense.png",
     rain: { // Rain to users after each round (values divided by end round count)
-      chance: 100,
-      min: 0.07,
-      max: 0.12,
+      chance: 10,
+      min: 0.0007,
+      max: 0.01,
       floating: 8 // Define floating points for min and max value
     },
     drop: {
-      chance: 100,
+      chance: 40,
       itemList: ['egg','box','divineshield','lifeincreasepotion','healpotion','healpotion','healpotion','healpotion','healpotion']
     }
   },
@@ -236,7 +236,7 @@ module.exports = {
     chatIcons: {
       fullHeart: "<:hf:698993994293575710>",
       rez: "<:rez:698993994310615130>",
-      coins: "<:btc:701228640683294721>"
+      coins: "<:news24:701237513557114981>"
     },
     costs: 0.2
   },
@@ -249,7 +249,7 @@ module.exports = {
       lifeIncreasePotion: "<:potion_red:698993994830446729>",
       healPotion: "<:potion_green:698993994511810620>",
       fullHeart: "<:hf:698993994293575710>",
-      coins: "<:btc:701228640683294721>",
+      coins: "<:news24:701237513557114981>",
       jackpot: "<:jackpot:698993994293706852>"
     },
     box:{
@@ -281,15 +281,15 @@ module.exports = {
         chance: 10
       }, 
       coins: {
-        chance: 100,
-        min: 0.05,
-        max: 0.15,
+        chance: 50,
+        min: 0.0005,
+        max: 0.015,
         floating: 8 // Define floating points for min and max value
       }, 
       jackpot: {
         chance: 2,
-        min: 50,
-        max: 80
+        min: 1,
+        max: 10
       }
     },
     lifeincreasepotion:{
@@ -310,7 +310,7 @@ module.exports = {
   jackpot: {
     chatIcons: {
       jackpot: "<:jackpot:698993994293706852>",
-      coins: "<:btc:701228640683294721>"
+      coins: "<:news24:701237513557114981>"
     }
   },
   top: {
@@ -504,8 +504,8 @@ module.exports = {
     }
   },
   claim:{
-    minLevel: 13, // min level that is needed for claim
-    daysBetween: 1 // how many days between claim
+    minLevel: 20, // min level that is needed for claim
+    daysBetween: 3 // how many days between claim
   },
   startUser: {
     level: 0,
@@ -532,7 +532,7 @@ module.exports = {
   messages: {
     // Some messages contain markdown -> http://markdown.de
     // Not command related messages
-    botStarted: "Cryptobreedables bot started and online as",
+    botStarted: "News24 bot started and online as",
     adminMode:", developer mode is enabled. Only admins are allowed to send commands.",
     cooldown: ", please wait the cooldown of 10 sec on all commands.",
     DMDisabled: "Direct messages are disabled. Please use the official command channel.",
@@ -556,7 +556,7 @@ module.exports = {
       info: "Info",
     },
     help: {
-      title: "Cryptobreedables bot commands",
+      title: "News24 bot commands",
       giftTitle: "!gift <@username> <box|divineshield|lifeincreasepotion|healpotion> <amount>",
       giftValue: "Send a item(s) as gift to another user.",
       versionTitle: "!cversion",
@@ -578,7 +578,7 @@ module.exports = {
       activateTitle: "!activate <item type> <item ID>",
       activateValue: "Activate/Change item by type and id for the battle. Type !me to get your profile link to check your items.",
       admin: {
-        title: "Cryptobreedables bot admin commands",
+        title: "News24 bot admin commands",
         startStopTitle: "!cstart / !cstop",
         startStopValue: "Enable/Disable cryptobreedables bot commands while the bot is running.",
         battleTitle: "!battle <monster life points>",
@@ -603,7 +603,7 @@ module.exports = {
       lowLevel: ", your level is to low to claim a free box. The mimimum level to claim a box is:"
     },
     version: {
-      title: "Cryptobreedables",
+      title: "News24",
       botversion: "Version",
     },
     rez: {
