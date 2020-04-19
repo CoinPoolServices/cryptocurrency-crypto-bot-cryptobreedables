@@ -101,10 +101,10 @@ module.exports = {
       roundTime: 10, // Time in seconds for each round
       totalRounds: 2, // How often the shop refresh so it always stays on bottom of chat
       shopIcons: { // Same Items need to be added to messages with the same key!
-        box: "573913085732061204",
-        potion_red: "575424030497308672",
-        potion_green: "575423922200379432",
-        divineshield: "573187067807268874",
+        box: "698993994243244075",
+        potion_red: "698993994830446729",
+        potion_green: "698993994511810620",
+        divineshield: "698993994881040476",
         //egg: "573069966119665689",
       },
       img: "shop_normal.png"
@@ -113,8 +113,8 @@ module.exports = {
       roundTime: 10, // Time in seconds for each round
       totalRounds: 2, // How often the shop refresh so it always stays on bottom of chat
       shopIcons: { // Same Items need to be added to messages with the same key!
-        reddragon: "613280949517680641",
-        blackdragon: "613280856160862238",
+        reddragon: "698993994973052928",
+        blackdragon: "698993994293837884",
         egg: "573069966119665689",
       },
       img: "shop_special.png"
@@ -140,8 +140,8 @@ module.exports = {
       percentage: 10
     },
     chatIcons: {
-      coins: "<:galilel_logo_white:582647716971020318>",
-      jackpot: "<:jackpot:584674195917635605>"
+      coins: "<:btc:701228640683294721>",
+      jackpot: "<:jackpot:698993994293706852>"
     },
   },
   battle: {
@@ -162,20 +162,20 @@ module.exports = {
     endRound: 16, // Round numver the battle ends
     roundTime: 10, // Time in seconds for each round
     attackIcons: {
-        sword: "573140874867900440"
+        sword: "698993994318741525"
     },
     chatIcons: {
-      sword: "<:sword:573140874867900440>",
-      coins: "<:galilel_logo_white:582647716971020318>",
-      jackpot: "<:jackpot:584674195917635605>",
-      box: "<:box:573913085732061204>",
+      sword: "<:sword:698993994318741525>",
+      coins: "<:btc:701228640683294721>",
+      jackpot: "<:jackpot:698993994293706852>",
+      box: "<:box:698993994243244075>",
       egg: "<:egg:573069966119665689>",
-      divineShield: "<:divineshield:573187067807268874>",
-      lifeIncreasePotion: "<:potion_red:575424030497308672>",
-      healPotion: "<:potion_green:575423922200379432>",
+      divineShield: "<:divineshield:698993994881040476>",
+      lifeIncreasePotion: "<:potion_red:698993994830446729>",
+      healPotion: "<:potion_green:698993994511810620>",
     },
     lifeIcons: {
-      fullHeart: "<:hf:572082464189841408>",
+      fullHeart: "<:hf:698993994293575710>",
       halfHeart: "<:hh:572135645523476491>",
       emptyHeart: "<:he:572135668495679498>"
     },
@@ -214,43 +214,43 @@ module.exports = {
   },
   level: {
     chatIcons: {
-      levelUp: "<:levelup:574363093443018752>",
+      levelUp: "<:levelup:698993994276929666>",
     }
   },
   me:{
     chatIcons: {
-      levelUp: "<:levelup:574363093443018752>",
-      fullHeart: "<:hf:572082464189841408>",
-      box: "<:box:573913085732061204>",
-      divineShield: "<:divineshield:573187067807268874>",
+      levelUp: "<:levelup:698993994276929666>",
+      fullHeart: "<:hf:698993994293575710>",
+      box: "<:box:698993994243244075>",
+      divineShield: "<:divineshield:698993994881040476>",
       egg: "<:egg:573069966119665689>",
-      lifeIncreasePotion: "<:potion_red:575424030497308672>",
-      healPotion: "<:potion_green:575423922200379432>",
-      dead: "<:dead:573134665448161299>",
-      sword: "<:sword:573140874867900440>",
-      profile: "<:profile:609438101538078720>"
+      lifeIncreasePotion: "<:potion_red:698993994830446729>",
+      healPotion: "<:potion_green:698993994511810620>",
+      dead: "<:dead:698993994046373929>",
+      sword: "<:sword:698993994318741525>",
+      profile: "<:profile:698993993962487920>"
     }
   },
   rez: {
     enabled: true, // Disable if rez should be free of charge
     chatIcons: {
-      fullHeart: "<:hf:572082464189841408>",
-      rez: "<:rez:573134737153982464>",
-      coins: "<:galilel_logo_white:582647716971020318>"
+      fullHeart: "<:hf:698993994293575710>",
+      rez: "<:rez:698993994310615130>",
+      coins: "<:btc:701228640683294721>"
     },
     costs: 0.2
   },
   use: {
     chatIcons: {
-      box: "<:box:573913085732061204>",
-      levelUp: "<:levelup:574363093443018752>",
+      box: "<:box:698993994243244075>",
+      levelUp: "<:levelup:698993994276929666>",
       egg: "<:egg:573069966119665689>",
-      divineShield: "<:divineshield:573187067807268874>",
-      lifeIncreasePotion: "<:potion_red:575424030497308672>",
-      healPotion: "<:potion_green:575423922200379432>",
-      fullHeart: "<:hf:572082464189841408>",
-      coins: "<:galilel_logo_white:582647716971020318>",
-      jackpot: "<:jackpot:584674195917635605>"
+      divineShield: "<:divineshield:698993994881040476>",
+      lifeIncreasePotion: "<:potion_red:698993994830446729>",
+      healPotion: "<:potion_green:698993994511810620>",
+      fullHeart: "<:hf:698993994293575710>",
+      coins: "<:btc:701228640683294721>",
+      jackpot: "<:jackpot:698993994293706852>"
     },
     box:{
       exp: {
@@ -309,14 +309,14 @@ module.exports = {
   },
   jackpot: {
     chatIcons: {
-      jackpot: "<:jackpot:584674195917635605>",
-      coins: "<:galilel_logo_white:582647716971020318>"
+      jackpot: "<:jackpot:698993994293706852>",
+      coins: "<:btc:701228640683294721>"
     }
   },
   top: {
     displayCount: 10,
     chatIcons: {
-      title: "<:star:574358215660404746>",
+      title: "<:star:699699270923714630>",
       place1: ":one:",
       place2: ":two:",
       place3: ":three:",
@@ -328,13 +328,13 @@ module.exports = {
       place9: ":nine:",
       place10: ":keycap_ten:",
       fail: ":x:",
-      levelUp: "<:levelup:574363093443018752>",
-      fullHeart: "<:hf:572082464189841408>",
-      box: "<:box:573913085732061204>",
-      divineShield: "<:divineshield:573187067807268874>",
+      levelUp: "<:levelup:698993994276929666>",
+      fullHeart: "<:hf:698993994293575710>",
+      box: "<:box:698993994243244075>",
+      divineShield: "<:divineshield:698993994881040476>",
       egg: "<:egg:573069966119665689>",
-      lifeIncreasePotion: "<:potion_red:575424030497308672>",
-      healPotion: "<:potion_green:575423922200379432>"
+      lifeIncreasePotion: "<:potion_red:698993994830446729>",
+      healPotion: "<:potion_green:698993994511810620>"
     }
   },
   monster: {
@@ -344,9 +344,9 @@ module.exports = {
         max: 322
     },
     chatIcons: {
-      fullHeart: "<:hf:572082464189841408>",
-      blood: "<:blood:573070011032141835>",
-      dead: "<:dead:573134665448161299>"
+      fullHeart: "<:hf:698993994293575710>",
+      blood: "<:blood:698993994205626428>",
+      dead: "<:dead:698993994046373929>"
     },
     img: {
       name: "monster",
@@ -393,9 +393,9 @@ module.exports = {
         from: 1,
         to: 10
       },
-      attacks: [["Claws cut","<:claws:613331099854307350>"]],
+      attacks: [["Claws cut","<:claws:698993994260021408>"]],
       chatIcons: {
-        dragon: "<:cbdragon:573070058797006850>"
+        dragon: "<:cbdragon:698993994495033384>"
       }
     },
     reddragon: {
@@ -423,9 +423,9 @@ module.exports = {
         from: 1,
         to: 8
       },
-      attacks: [["Firestorm","<:firestorm:613305123598368768>"],["Fire blast","<:firestorm:613305123598368768>"],["Ember","<:firestorm:613305123598368768>"]],
+      attacks: [["Firestorm","<:firestorm:698993994402758756>"],["Fire blast","<:firestorm:698993994402758756>"],["Ember","<:firestorm:698993994402758756>"]],
       chatIcons: {
-        reddragon: "<:reddragon:613280949517680641>"
+        reddragon: "<:reddragon:698993994973052928>"
       }
     },
     blackdragon: {
@@ -453,9 +453,9 @@ module.exports = {
         from: 1,
         to: 8
       },
-      attacks: [["Blizzard","<:blizzard:613305091276931082>"],["Ice beam","<:blizzard:613305091276931082>"]],
+      attacks: [["Blizzard","<:blizzard:698993994021077083>"],["Ice beam","<:blizzard:698993994021077083>"]],
       chatIcons: {
-        blackdragon: "<:blackdragon:613280856160862238>"
+        blackdragon: "<:blackdragon:698993994293837884>"
       }
     },
     divineShield: { 
@@ -470,8 +470,8 @@ module.exports = {
       totalHealth: 100,
       maxItems: 5,
       chatIcons: {
-        divineShield: "<:divineshield:573187067807268874>",
-        destroyed: "<:explode:573217020460531725>"
+        divineShield: "<:divineshield:698993994881040476>",
+        destroyed: "<:explode:698993994666868829>"
       },
     },
     healPotion: {
