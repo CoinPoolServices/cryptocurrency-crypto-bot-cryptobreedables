@@ -115,7 +115,7 @@ module.exports = {
       shopIcons: { // Same Items need to be added to messages with the same key!
         reddragon: "698993994973052928",
         blackdragon: "698993994293837884",
-          egg: "702173015726882816",
+        egg: "702173015726882816",
       },
       img: "shop_special.png"
     },
@@ -353,6 +353,23 @@ module.exports = {
       numberFrom: 1,
       numberTo: 18
     }
+    },
+  raid: {
+        triggerChance: 1,
+        triggerDamage: {
+            min: 500,
+            max: 1000
+        },
+        chatIcons: {
+            fullHeart: "<:hf:698993994293575710>",
+            blood: "<:blood:698993994205626428>",
+            dead: "<:dead:698993994046373929>"
+        },
+        img: {
+            name: "raid",
+            numberFrom: 1,
+            numberTo: 4
+        }
   },
   items:{
     dragon: {
