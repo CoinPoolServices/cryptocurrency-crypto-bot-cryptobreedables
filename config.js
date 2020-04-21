@@ -105,7 +105,7 @@ module.exports = {
         potion_red: "698993994830446729",
         potion_green: "698993994511810620",
         divineshield: "698993994881040476",
-        //egg: "573069966119665689",
+        //egg: "702173015726882816",
       },
       img: "shop_normal.png"
     },
@@ -115,7 +115,7 @@ module.exports = {
       shopIcons: { // Same Items need to be added to messages with the same key!
         reddragon: "698993994973052928",
         blackdragon: "698993994293837884",
-        egg: "573069966119665689",
+          egg: "702173015726882816",
       },
       img: "shop_special.png"
     },
@@ -140,7 +140,7 @@ module.exports = {
       percentage: 10
     },
     chatIcons: {
-      coins: "<:news24:701237513557114981>",
+      coins: "<:news24:702172319820546088>",
       jackpot: "<:jackpot:698993994293706852>"
     },
   },
@@ -166,18 +166,18 @@ module.exports = {
     },
     chatIcons: {
       sword: "<:sword:698993994318741525>",
-      coins: "<:news24:701237513557114981>",
+      coins: "<:news24:702172319820546088>",
       jackpot: "<:jackpot:698993994293706852>",
       box: "<:box:698993994243244075>",
-      egg: "<:egg:573069966119665689>",
+      egg: "<:degg:702173015726882816>",
       divineShield: "<:divineshield:698993994881040476>",
       lifeIncreasePotion: "<:potion_red:698993994830446729>",
       healPotion: "<:potion_green:698993994511810620>",
     },
     lifeIcons: {
       fullHeart: "<:hf:698993994293575710>",
-      halfHeart: "<:hh:572135645523476491>",
-      emptyHeart: "<:he:572135668495679498>"
+      halfHeart: "<:hh:698993994323197962>",
+      emptyHeart: "<:he:698993993983328368>"
     },
     triggerExp: {
       min: 4,
@@ -223,7 +223,7 @@ module.exports = {
       fullHeart: "<:hf:698993994293575710>",
       box: "<:box:698993994243244075>",
       divineShield: "<:divineshield:698993994881040476>",
-      egg: "<:egg:573069966119665689>",
+      egg: "<:degg:702173015726882816>",
       lifeIncreasePotion: "<:potion_red:698993994830446729>",
       healPotion: "<:potion_green:698993994511810620>",
       dead: "<:dead:698993994046373929>",
@@ -236,7 +236,7 @@ module.exports = {
     chatIcons: {
       fullHeart: "<:hf:698993994293575710>",
       rez: "<:rez:698993994310615130>",
-      coins: "<:news24:701237513557114981>"
+      coins: "<:news24:702172319820546088>"
     },
     costs: 0.2
   },
@@ -244,12 +244,12 @@ module.exports = {
     chatIcons: {
       box: "<:box:698993994243244075>",
       levelUp: "<:levelup:698993994276929666>",
-      egg: "<:egg:573069966119665689>",
+      egg: "<:degg:702173015726882816>",
       divineShield: "<:divineshield:698993994881040476>",
       lifeIncreasePotion: "<:potion_red:698993994830446729>",
       healPotion: "<:potion_green:698993994511810620>",
       fullHeart: "<:hf:698993994293575710>",
-      coins: "<:news24:701237513557114981>",
+      coins: "<:news24:702172319820546088>",
       jackpot: "<:jackpot:698993994293706852>"
     },
     box:{
@@ -310,7 +310,7 @@ module.exports = {
   jackpot: {
     chatIcons: {
       jackpot: "<:jackpot:698993994293706852>",
-      coins: "<:news24:701237513557114981>"
+      coins: "<:news24:702172319820546088>"
     }
   },
   top: {
@@ -332,7 +332,7 @@ module.exports = {
       fullHeart: "<:hf:698993994293575710>",
       box: "<:box:698993994243244075>",
       divineShield: "<:divineshield:698993994881040476>",
-      egg: "<:egg:573069966119665689>",
+      egg: "<:degg:702173015726882816>",
       lifeIncreasePotion: "<:potion_red:698993994830446729>",
       healPotion: "<:potion_green:698993994511810620>"
     }

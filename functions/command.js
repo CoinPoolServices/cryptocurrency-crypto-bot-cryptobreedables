@@ -795,7 +795,8 @@ module.exports = {
         var userDivineShieldHealth = getUserData.items.divineShield.health;
         var userDeath = getUserData.death;
         var userKills = getUserData.kills;
-        me += config.me.chatIcons.profile+' '+config.bot.websiteUserProfile+userID+'\n';
+
+        me += config.me.chatIcons.profile +' '+config.bot.websiteUserProfile+userID+'\n';
         me += config.me.chatIcons.levelUp+' **'+config.messages.me.level+':** '+userLevel+' - **'+config.messages.me.exp+':** '+userLevelExp+'/'+userNextLevelExp+'\n';
         me += config.me.chatIcons.fullHeart+' **'+config.messages.me.health+':** '+userHealth+'/'+userRezHealth+'\n';
         me += config.me.chatIcons.egg+' **'+config.messages.me.eggs+':** '+userEggs+'\n';
@@ -806,6 +807,7 @@ module.exports = {
         me += config.me.chatIcons.sword+' **'+config.messages.me.kills+':** '+userKills+'\n';
         me += config.me.chatIcons.dead+' **'+config.messages.me.death+':** '+userDeath;
         chat.chat_reply(msg,'embed',false,messageType,config.colors.white,false,config.messages.me.title+' - '+userName.username,false,me,false,false,false,false);
+
         return; 
     },
 
