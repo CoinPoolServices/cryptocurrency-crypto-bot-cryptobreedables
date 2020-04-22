@@ -10,7 +10,7 @@ module.exports = {
     gameLoggingMaxFileSize: 5242880, // filesize in bytes
     gameLoggingMaxBackups: 5, // How many backup files to hold
     gameLoggingZipOldLogs: true, // After reaching max file zip old logs
-    commandPrefix: "!", // Bot prefix to trigger the bot <- if symbol changed it needs to get allowed on check.js
+    commandPrefix: "+", // Bot prefix to trigger the bot <- if symbol changed it needs to get allowed on check.js
     cooldownTime: 5, // Cooldown a user need to wait between commands in seconds
     coinName: "News24",
     coinSymbol: "News24", // e.g. BTC
@@ -120,8 +120,13 @@ module.exports = {
       img: "shop_special.png"
     },
     rare: {
-      img: "shop_rare.png"
-    },
+          roundTime: 10, // Time in seconds for each round
+          totalRounds: 2, // How often the shop refresh so it always stays on bottom of chat
+          shopIcons: { // Same Items need to be added to messages with the same key!
+              whitedragon: "698993994973052928",
+          },
+          img: "shop_rare.png"
+      },
     shopCosts: {
       realPrices: { // If enabled the defined prices are cent prices calculated to the used coin // IMPORTANT!! -> The cron 'coinPrice' on the main bot has to be enabled to make this option working
         enabled: true,
