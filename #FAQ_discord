@@ -102,7 +102,7 @@ Max value to be kept: 8 (more possible if bought from shop)
 :dead: KILL/DEAD
 :explode: DIVINE SHIELD EXPLODE
 
-:reddragon: Red dragon and :blackdragon: Black dragon
+:reddragon: Red dragon and :blackdragon: Black dragon and :whitedragon: White dragon
 **Description:** Attacks the monster and does damage based on your level and health. Only one pet can be active for a fight.
 **Trigger chance:** 50%
 **Crit chance:** 8% (2x - 3x)

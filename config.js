@@ -95,7 +95,7 @@ module.exports = {
     cron: {
       enabled: true,
       randomShopStartTime: 1200,
-      possibleShops: ['normal','special'],
+      possibleShops: ['normal','special','rare'],
     },
     normal: {
       roundTime: 10, // Time in seconds for each round
@@ -105,7 +105,6 @@ module.exports = {
         potion_red: "698993994830446729",
         potion_green: "698993994511810620",
         divineshield: "698993994881040476",
-        //egg: "702173015726882816",
       },
       img: "shop_normal.png"
     },
@@ -115,7 +114,7 @@ module.exports = {
       shopIcons: { // Same Items need to be added to messages with the same key!
         reddragon: "698993994973052928",
         blackdragon: "698993994293837884",
-        egg: "702173015726882816",
+          egg: "702322745043583066",
       },
       img: "shop_special.png"
     },
@@ -175,7 +174,7 @@ module.exports = {
       coins: "<:news24:702172319820546088>",
       jackpot: "<:jackpot:698993994293706852>",
       box: "<:box:698993994243244075>",
-      egg: "<:degg:702173015726882816>",
+        egg: "<:degg:702322745043583066>",
       divineShield: "<:divineshield:698993994881040476>",
       lifeIncreasePotion: "<:potion_red:698993994830446729>",
       healPotion: "<:potion_green:698993994511810620>",
@@ -229,7 +228,7 @@ module.exports = {
       fullHeart: "<:hf:698993994293575710>",
       box: "<:box:698993994243244075>",
       divineShield: "<:divineshield:698993994881040476>",
-      egg: "<:degg:702173015726882816>",
+      egg: "<:degg:702322745043583066>",
       lifeIncreasePotion: "<:potion_red:698993994830446729>",
       healPotion: "<:potion_green:698993994511810620>",
       dead: "<:dead:698993994046373929>",
@@ -250,7 +249,7 @@ module.exports = {
     chatIcons: {
       box: "<:box:698993994243244075>",
       levelUp: "<:levelup:698993994276929666>",
-      egg: "<:degg:702173015726882816>",
+      egg: "<:degg:702322745043583066>",
       divineShield: "<:divineshield:698993994881040476>",
       lifeIncreasePotion: "<:potion_red:698993994830446729>",
       healPotion: "<:potion_green:698993994511810620>",
@@ -338,7 +337,7 @@ module.exports = {
       fullHeart: "<:hf:698993994293575710>",
       box: "<:box:698993994243244075>",
       divineShield: "<:divineshield:698993994881040476>",
-      egg: "<:degg:702173015726882816>",
+      egg: "<:degg:702322745043583066>",
       lifeIncreasePotion: "<:potion_red:698993994830446729>",
       healPotion: "<:potion_green:698993994511810620>"
     }
@@ -709,8 +708,10 @@ module.exports = {
           egg: "Egg",
         }
       },
-      rare:{
+      rare: {
+        shopItems: {
           whitedragon: "White dragon",
+        }
       }
     },
     battle: {

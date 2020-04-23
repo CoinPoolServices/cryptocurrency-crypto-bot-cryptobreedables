@@ -1039,7 +1039,7 @@ module.exports = {
         // Set start round or current round
         // Create shop message and start the event
         //msg,replyType,replyUsername,senderMessageType,replyEmbedColor,replyAuthor,replyTitle,replyFields,replyDescription,replyFooter,replyThumbnail,replyImage,replyTimestamp
-        chat.chat_reply(msg,'embed',false,messageType,config.colors.special,false,config.messages.shop.title.toUpperCase()+' '+partTwo.toUpperCase()+' ('+eventCurrentRound+'/'+shopEndRound+')',false,config.messages.shop.disclaimer+'\n'+shopMessageItems,false,false,shopImg,false).then(function(reactCollectorMessage) {
+        chat.chat_reply(msg, 'embed', false, messageType, config.colors.special, false, config.messages.shop.title.toUpperCase()+' '+partTwo.toUpperCase()+' ('+eventCurrentRound+'/'+shopEndRound+')',false,config.messages.shop.disclaimer+'\n'+shopMessageItems,false,false,shopImg,false).then(function(reactCollectorMessage) {
             // Save message to global eventCollectorMessage
             eventCollectorMessage = reactCollectorMessage;
             event.event_shop_build(eventCollectorMessage,userID,userName,messageType,userRole,msg,partTwo);
