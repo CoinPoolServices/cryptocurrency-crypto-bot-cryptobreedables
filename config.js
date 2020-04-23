@@ -114,7 +114,7 @@ module.exports = {
       shopIcons: { // Same Items need to be added to messages with the same key!
         reddragon: "698993994973052928",
         blackdragon: "698993994293837884",
-          egg: "702322745043583066",
+        egg: "702322745043583066",
       },
       img: "shop_special.png"
     },
@@ -122,7 +122,7 @@ module.exports = {
           roundTime: 10, // Time in seconds for each round
           totalRounds: 2, // How often the shop refresh so it always stays on bottom of chat
           shopIcons: { // Same Items need to be added to messages with the same key!
-              whitedragon: "698993994973052928",
+              whitedragon: "702713171420512257",
           },
           img: "shop_rare.png"
       },
