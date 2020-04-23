@@ -138,7 +138,8 @@ module.exports = {
       divineshield: .2,
       reddragon: 20,
       blackdragon: 40,
-      egg: 10,
+      whitedragon: 60,
+      egg: 5,
     },
     jackpot: {
       enabled: true,
@@ -359,23 +360,6 @@ module.exports = {
       numberTo: 18
     }
     },
-  raid: {
-        triggerChance: 1,
-        triggerDamage: {
-            min: 500,
-            max: 1000
-        },
-        chatIcons: {
-            fullHeart: "<:hf:698993994293575710>",
-            blood: "<:blood:698993994205626428>",
-            dead: "<:dead:698993994046373929>"
-        },
-        img: {
-            name: "raid",
-            numberFrom: 1,
-            numberTo: 4
-        }
-  },
   items:{
     dragon: {
       name: 'Dragon',
@@ -493,21 +477,21 @@ module.exports = {
                   to: 3
               }
           },
-          triggerChance: 50,
-          levelMultiplier1: 25,
-          levelMultiplier2: 50,
-          levelMultiplier3: 75,
-          levelMultiplierSmallerEqual1: 2,
-          levelMultiplierBigger1SmallerEqual2: 3,
-          levelMultiplierBigger2SmallerEqual3: 4,
-          levelMultiplierBigger3: 5,
+          triggerChance: 10,
+          levelMultiplier1: 50,
+          levelMultiplier2: 75,
+          levelMultiplier3: 90,
+          levelMultiplierSmallerEqual1: 3,
+          levelMultiplierBigger1SmallerEqual2: 4,
+          levelMultiplierBigger2SmallerEqual3: 5,
+          levelMultiplierBigger3: 6,
           randomPlusMinusPercentage: {
               from: 1,
-              to: 8
+              to: 10
           },
-          attacks: [["PulseBeam", "<:P\pulsebeam:698993994402758756>"], ["Twister  ", "<:twister:698993994402758756>"]],
+          attacks: [["PulseBeam", "<:Pulse_Beam:702712609010483251>"], ["WhirlPool ", "<:whirlpool:702715316991557742>"]],
           chatIcons: {
-              reddragon: "<:whitedragon:698993994973052928>"
+              whitedragon: "<:whitedragon:702713171420512257>"
           }
       },
     divineShield: { 
@@ -726,7 +710,7 @@ module.exports = {
         }
       },
       rare:{
-        // soon
+          whitedragon: "White dragon",
       }
     },
     battle: {

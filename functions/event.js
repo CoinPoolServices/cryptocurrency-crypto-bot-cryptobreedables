@@ -652,6 +652,83 @@ module.exports = {
                 // Remove user from command block list to allow to fire new commands
                 check.check_remove_blocklist(reactUser);
                 return;
+            case 'whitedragon':
+                // Automated prices if enabled and global coincentprice not false
+                var itemCosts = config.shop.shopCosts.whitedragon;
+                if (config.shop.shopCosts.realPrices.enabled && coinCentPrice > 0) {
+                    itemCosts = Big(config.shop.shopCosts.whitedragon).times(coinCentPrice).toFixed(8);
+                }
+                // Check if possible to grab user balance and check if he has enough to buy the item
+                if (!userBalance || Big(userBalance).lt(itemCosts)) {
+                    chat.chat_reply(msg, 'embed', '<@' + reactUser + '>', messageType, config.colors.error, false, config.messages.shop.error.title, false, config.messages.shop.error.message, false, false, false, false);
+                    // Remove user from command block list to allow to fire new commands
+                    check.check_remove_blocklist(reactUser);
+                    return;
+                }
+                // Substract balance from user
+                var balanceSubstract = await user.user_substract_balance(itemCosts, reactUser);
+                if (!balanceSubstract) {
+                    chat.chat_reply(msg, 'embed', '<@' + reactUser + '>', messageType, config.colors.error, false, config.messages.title.error, false, config.messages.wentWrong, false, false, false, false);
+                    // Remove user from command block list to allow to fire new commands
+                    check.check_remove_blocklist(reactUser);
+                    return;
+                }
+                // Save Payment to user transaction table
+                var savePaymentDone = await transaction.transaction_save_payment_to_db(itemCosts, reactUser, config.bot.botID, config.messages.payment.game.paid);
+                if (!savePaymentDone) {
+                    chat.chat_reply(msg, 'embed', '<@' + reactUser + '>', messageType, config.colors.error, false, config.messages.title.error, false, config.messages.wentWrong, false, false, false, false);
+                    // Remove user from command block list to allow to fire new commands
+                    check.check_remove_blocklist(reactUser);
+                    return;
+                }
+                // Create red dragon
+                var newPet = await cryptobreedables.pet_create_item_random_characteristics(reactIcon); // Get random pet from array and create pet values
+                if (!newPet) {
+                    // If fail to create new pet
+                    chat.chat_reply(msg, 'embed', '<@' + reactUser + '>', messageType, config.colors.error, false, config.messages.title.error, false, config.messages.wentWrong, false, false, false, false);
+                    // Remove user from command block list to allow to fire new commands
+                    check.check_remove_blocklist(reactUser);
+                    return;
+                }
+                // Check if current pet type array exists on array. If yes add a new pet to it, else create first active petID and pet
+                var petID = 'cb' + check.check_get_random_string(10); // Create pet new id
+                // Check if object contains id and create new ones until its unique
+                while (userAttackItems.hasOwnProperty(petID)) {
+                    petID = 'cb' + check.check_get_random_string(10);
+                }
+                // Write active id if pet type does not exists yet
+                if (!userAttackItems.hasOwnProperty(reactIcon)) {
+
+                    var writeNewPetIndex = await storage.storage_write_local_storage(reactUser, 'games.cryptobreedables.attackItems.' + reactIcon + '.activeID', petID);
+                    // If not possible to write new index
+                    if (!writeNewPetIndex) {
+                        chat.chat_reply(msg, 'embed', '<@' + reactUser + '>', messageType, config.colors.error, false, config.messages.title.error, false, config.messages.wentWrong, false, false, false, false);
+                        // Remove user from command block list to allow to fire new commands
+                        check.check_remove_blocklist(reactUser);
+                        return;
+                    }
+                }
+                // Write new pet
+                var writeNewPet = await storage.storage_write_local_storage(reactUser, 'games.cryptobreedables.attackItems.' + reactIcon + '.' + petID, newPet);
+                // If not possible to write new pet
+                if (!writeNewPet) {
+                    chat.chat_reply(msg, 'embed', '<@' + reactUser + '>', messageType, config.colors.error, false, config.messages.title.error, false, config.messages.wentWrong, false, false, false, false);
+                    // Remove user from command block list to allow to fire new commands
+                    check.check_remove_blocklist(reactUser);
+                    return;
+                }
+                // Log purchase to game log
+                log.log_write_game(config.messages.shop.log.action, config.messages.shop.log.user + ' <@' + reactUser + '> - ' + config.messages.shop.success + ' 1 ' + config.messages.shop[partTwo].shopItems[reactIcon] + config.messages.shop.end);
+                // Check if real price enabled
+                var realPriceText = "";
+                if (config.shop.shopCosts.realPrices.enabled && coinCentPrice > 0) {
+                    realPriceText = " (" + Big(config.shop.shopCosts.whitedragon).div(100).toFixed(2) + ' ' + coinCurrency + ")";
+                }
+                // Success message for user
+                chat.chat_reply(msg, 'normal', '<@' + reactUser + '>', messageType, false, false, false, false, ' ' + config.messages.shop.success + ' `1` `' + config.messages.shop[partTwo].shopItems[reactIcon] + '` ' + config.messages.shop.success2 + ' ' + config.battle.chatIcons.coins + ' `' + Big(itemCosts).toFixed(8) + '` ' + config.bot.coinName + ' (' + config.bot.coinSymbol + ")" + realPriceText + config.messages.shop.end, false, false, false, false);
+                // Remove user from command block list to allow to fire new commands
+                check.check_remove_blocklist(reactUser);
+                return;
             case 'egg':
                 // Automated prices if enabled and global coincentprice not false
                 var itemCosts = config.shop.shopCosts.egg;

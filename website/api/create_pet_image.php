@@ -115,6 +115,20 @@
                 $returnData['hash'] = $hash;
             }
 
+			if($pettype == 'whitedragon'){
+                $im = new Imagick(250,292,'none');
+                $im->setBackgroundColor(new ImagickPixel("rgba(250,15,150,0)"));
+                $filename = '..'.$config['whitedragonfilepath'].$pettype.'.svg';
+                $svg = file_get_contents($filename);
+                $im->readImageBlob($svg);
+                $im->setImageFormat("png32");   
+                $im->resizeImage(250, 292, imagick::FILTER_HAMMING, 1);
+                $im->writeImage('..'.$config['tmppath'].$hash.".png");
+                $im->clear();
+                $im->destroy();
+                $returnData['hash'] = $hash;
+            }
+
             // Other pets 
             // ...
 

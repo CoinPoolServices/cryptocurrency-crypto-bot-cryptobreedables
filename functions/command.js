@@ -989,8 +989,25 @@ module.exports = {
                 }
                 break;
             case "rare":
-                chat.chat_reply(msg,'embed',userName,messageType,config.colors.error,false,false,false,config.messages.notValidCommand,false,false,false,false);
-                return;
+                if (!eventActive && manuallyFired) {
+                    shopRoundTime = config.shop[partTwo].roundTime;
+                    shopEndRound = config.shop[partTwo].totalRounds;
+                    shopImg = config.shop[partTwo].img;
+                    shopIcons = config.shop[partTwo].shopIcons;
+                    // Set icons to current global eventCollectorMessage
+                    shopMessageItems = '\n';
+                    Object.keys(shopIcons).forEach(function (k) {
+                        // Automated prices if enabled and global coincentprice not false
+                        var itemCosts = config.shop.shopCosts[k];
+                        if (config.shop.shopCosts.realPrices.enabled && coinCentPrice > 0) {
+                            itemCosts = Big(config.shop.shopCosts[k]).times(coinCentPrice).toFixed(8);
+                            shopMessageItems += '<:' + k + ':' + shopIcons[k] + '> **' + config.messages.shop[partTwo].shopItems[k] + '** (' + itemCosts + ' ' + config.bot.coinSymbol + ') (' + Big(config.shop.shopCosts[k]).div(100).toFixed(2) + ' ' + coinCurrency + ')\n';
+                        } else {
+                            shopMessageItems += '<:' + k + ':' + shopIcons[k] + '> **' + config.messages.shop[partTwo].shopItems[k] + '** (' + itemCosts + ' ' + config.bot.coinSymbol + ')\n';
+                        }
+                    });
+                }
+                break;
             default:
                 chat.chat_reply(msg,'embed',userName,messageType,config.colors.error,false,false,false,config.messages.notValidCommand,false,false,false,false);
                 return;

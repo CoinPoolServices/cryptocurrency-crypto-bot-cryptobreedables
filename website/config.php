@@ -10,8 +10,10 @@
         'dragonfilepath' => '/pets/dragons/',
         // Red dragon api
         'reddragonfilepath' => '/pets/reddragon/',
-        // Red dragon api
+        // Black dragon api
         'blackdragonfilepath' => '/pets/blackdragon/',
+		// White dragon api
+        'whitedragonfilepath' => '/pets/whitedragon/',
         // Possible coins
         "gamePath" => ['cryptobreedables'],
         // Lowdb path

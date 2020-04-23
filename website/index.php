@@ -136,6 +136,13 @@
                                                         //print_r($array);
                                                         echo "<div class='badge'><img src='".$config['tmppath'].$array['hash']."' /></div>";
                                                     }
+													if($itemType == 'whitedragon'){
+                                                        //echo $config['createimagelink']."?type=dragon&gen=".$value['gen']."&glow=".$value['glow']."&shine=".$value['shine']."&r=".explode(',',$value['color'])[0]."&g=".explode(',',$value['color'])[1]."&b=".explode(',',$value['color'])[2]."&apikey=<br>";
+                                                        $strJsonFileContents = file_get_contents($config['createimagelink']."?type=whitedragon&apikey=".$config['apikey'],true);
+                                                        $array = json_decode($strJsonFileContents,true);
+                                                        //print_r($array);
+                                                        echo "<div class='badge'><img src='".$config['tmppath'].$array['hash']."' /></div>";
+                                                    }
                                                     $petID = $key;
                                                     echo "<div class='badge'><span class='bold'>ID:</span> ".$petID."</div>";;
                                                     // Item stats

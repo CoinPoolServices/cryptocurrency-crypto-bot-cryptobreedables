@@ -50,8 +50,12 @@ module.exports = {
             pet.exp = config.items.reddragon.exp;
         }
         if(petType == 'blackdragon'){
-            pet.level = config.items.reddragon.level;
-            pet.exp = config.items.reddragon.exp;
+            pet.level = config.items.blackdragon.level;
+            pet.exp = config.items.blackdragon.exp;
+        }
+        if (petType == 'whitedragon') {
+            pet.level = config.items.whitedragon.level;
+            pet.exp = config.items.whitedragon.exp;
         }
         return pet;
     },
