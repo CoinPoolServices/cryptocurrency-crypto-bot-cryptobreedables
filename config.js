@@ -310,7 +310,7 @@ module.exports = {
     }
   },
   activate:{
-    possiblePets: ["dragon","reddragon","blackdragon"]
+    possiblePets: ["dragon","reddragon","blackdragon","whitedragon"]
   },
   jackpot: {
     chatIcons: {
@@ -479,7 +479,37 @@ module.exports = {
       chatIcons: {
         blackdragon: "<:blackdragon:698993994293837884>"
       }
-    },
+      },
+      whitedragon: {
+          name: 'White dragon',
+          description: 'White dragon pet that supports you while fighting.',
+          level: 0,
+          exp: 0,
+          damage: 20,
+          critDamage: {
+              chance: 8,
+              multiplier: {
+                  from: 2,
+                  to: 3
+              }
+          },
+          triggerChance: 50,
+          levelMultiplier1: 25,
+          levelMultiplier2: 50,
+          levelMultiplier3: 75,
+          levelMultiplierSmallerEqual1: 2,
+          levelMultiplierBigger1SmallerEqual2: 3,
+          levelMultiplierBigger2SmallerEqual3: 4,
+          levelMultiplierBigger3: 5,
+          randomPlusMinusPercentage: {
+              from: 1,
+              to: 8
+          },
+          attacks: [["PulseBeam", "<:P\pulsebeam:698993994402758756>"], ["Twister  ", "<:twister:698993994402758756>"]],
+          chatIcons: {
+              reddragon: "<:whitedragon:698993994973052928>"
+          }
+      },
     divineShield: { 
       name: "Divine shield",
       description: "Protects players from the attack of monsters.",
