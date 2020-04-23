@@ -357,7 +357,7 @@ module.exports = {
     img: {
       name: "monster",
       numberFrom: 1,
-      numberTo: 18
+      numberTo: 14
     }
     },
   items:{
