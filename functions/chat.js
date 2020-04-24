@@ -88,7 +88,7 @@ module.exports = {
                     replyFooterIcon = replyFooter[1];
                 embed.setFooter(replyFooterText,replyFooterIcon);
             }else{
-                embed.setFooter(config.bot.websiteLink,config.bot.websiteIcon);
+                embed.setFooter(config.bot.websiteLink);//,config.bot.websiteIcon);
             }
             
             // Set thumbnail

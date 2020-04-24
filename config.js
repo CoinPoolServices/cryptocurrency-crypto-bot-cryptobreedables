@@ -25,9 +25,8 @@ module.exports = {
     websiteApiKey: "12Cryptobreedables34",
     websiteCreateImgLink: "http://cryptopets.coinpoolservices.com/api/create_pet_image.php", // parameters on create image function
     websiteImgLink: "http://cryptopets.coinpoolservices.com/tmp/", // image + extenxion needs to get added
-    websiteIcon: "http://cryptopets.coinpoolservices.com/images/favicons/favicon-32x32.png",
-    websiteLink: "http://cryptopets.coinpoolservices.com/",
-    websiteUserProfile: "http://cryptopets.coinpoolservices.com/u/news24/",
+    //websiteIcon: "http://cryptopets.coinpoolservices.com/images/favicons/favicon-32x32.png",
+    websiteLink: "https://coinpoolservices.com/",
     commandIgnor: ["register","r","profile","p","balance","b","deposit","d","withdraw","w","stake","unstake","tip","rain","drop","history","update",,"donate","notify","version","start","stop","getdeposits","gd","creditdeposits","cd","getstakes","gs","creditstakes","cs","clear","c"] // commands to ignor because of other bots
   },
   mysql: {
@@ -306,7 +305,7 @@ module.exports = {
       max: 100
     },
     egg:{
-      possiblePets: ["dragon"]
+        possiblePets: ["dragon", "dragon", "dragon", "dragon", "dragon", "dragon", "dragon", "dragon", "dragon", "reddragon", "blackdragon" ]
     }
   },
   activate:{
