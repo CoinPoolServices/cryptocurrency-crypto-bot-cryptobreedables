@@ -125,6 +125,9 @@ module.exports = {
         if(msg == 'battlecron'){
             return globalClient.channels.get(check.check_getRandomFromArray(config.bot.respondChannelIDs,1)[0]).send(this.chat_build_reply(replyType,replyUsername,senderMessageType,replyEmbedColor,replyAuthor,replyTitle,replyFields,replyDescription,replyFooter,replyThumbnail,replyImage,replyTimestamp));
         }
+        if (msg == 'raidcron') {
+            return globalClient.channels.get(check.check_getRandomFromArray(config.bot.respondChannelIDs, 1)[0]).send(this.chat_build_reply(replyType, replyUsername, senderMessageType, replyEmbedColor, replyAuthor, replyTitle, replyFields, replyDescription, replyFooter, replyThumbnail, replyImage, replyTimestamp));
+        }
         // Check if msg empty and use main chat id for reply
         if(msg == 'shopcron'){
             return globalClient.channels.get(check.check_getRandomFromArray(config.bot.respondChannelIDs,1)[0]).send(this.chat_build_reply(replyType,replyUsername,senderMessageType,replyEmbedColor,replyAuthor,replyTitle,replyFields,replyDescription,replyFooter,replyThumbnail,replyImage,replyTimestamp));

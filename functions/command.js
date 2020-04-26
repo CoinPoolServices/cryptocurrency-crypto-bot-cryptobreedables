@@ -155,6 +155,75 @@ module.exports = {
             event.event_battle_build(eventCollectorMessage,userID,userName,messageType,userRole,msg);
         });
         return;
+    },
+
+    command_raid: function (manuallyFired, userID, userName, messageType, userRole, msg, partTwo) {
+        // Private message not allowed
+        if (messageType === 'dm') {
+            chat.chat_reply(msg, 'embed', userName, messageType, config.colors.error, false, config.messages.title.error, false, config.messages.private, false, false, false, false);
+            return;
+        }
+        // Check if user is allowed to fire the command
+        if (userRole < 2 && manuallyFired) { // mods are allowed to start raids
+            chat.chat_reply(msg, 'embed', userName, messageType, config.colors.error, false, config.messages.title.error, false, config.messages.notAllowedCommand, false, false, false, false);
+            return;
+        }
+        // Check if value is given, is numeric, is not out of int range
+        if (!partTwo || !check.check_isNumeric(partTwo) || check.check_out_of_int_range(partTwo)) {
+            chat.chat_reply(msg, 'embed', userName, messageType, config.colors.error, false, config.messages.title.error, false, config.messages.notValidCommand, false, false, false, false);
+            return;
+        }
+        // Set value BigInt and from minus to plus if its negative
+        partTwo = Math.abs(partTwo).toFixed();
+        // Check if min lifepoints are set 
+        if (partTwo < config.raid.minLifePoints) {
+            chat.chat_reply(msg, 'embed', userName, messageType, config.colors.error, false, config.messages.title.error, false, config.messages.raid.minLifePoints + " " + config.raid.minLifePoints + " " + config.messages.raid.minLifePoints2, false, false, false, false);
+            return;
+        }
+        // Check if currently active event is running
+        if (eventActive) {
+            chat.chat_reply(msg, 'embed', userName, messageType, config.colors.error, false, config.messages.title.warning, false, config.messages.raid.active, false, false, false, false);
+            return;
+        }
+        // If event not active and manually fired reset round count and first start life value
+        if (!eventActive && manuallyFired) {
+
+            // Mention warrior group if enabled
+            if (config.commands.mention) {
+                try {
+                    chat.chat_reply(msg, 'normal', false, messageType, false, false, false, false, '<@&' + config.bot.mentionGroup + '>', false, false, false, false);
+                } catch (error) {
+                }
+            }
+
+            eventCurrentRound = raidStartRound;
+            raidStartLifePoints = partTwo;
+            raidCurrentLifePoints = partTwo;
+            log.log_write_game(config.messages.raid.log.action, config.messages.raid.log.user + ' ' + userName + ' - ' + config.messages.raid.log.start + ' ' + partTwo);
+        }
+        // Caluclate life display from global vars
+        raidCurrentLifeDisplay = '';
+        event.event_life_display(raidCurrentLifePoints);
+        // Set global eventActive
+        eventActive = true;
+        eventName = "raid";
+        // Set start round or current round
+        if (eventCurrentRound > raidEndRound)
+            eventCurrentRound = raidStartRound
+        // Create monster image if manually fired
+        var raidmonsterImage = '';
+        if (manuallyFired) {
+            var raidmonsterNumber = check.check_random_from_to(config.raidmonster.img.numberFrom, config.raidmonster.img.numberTo);
+            raidMonsterImage = config.raidmonster.img.name + monsterNumber + '.jpg';
+        }
+        raidmonsterImage = raidMonsterImage;
+        // Create the monster message and start the event
+        chat.chat_reply(msg, 'embed', false, messageType, config.colors.special, false, config.messages.raid.title + ' ' + raidCurrentLifeDisplay, [[config.messages.raid.lifePoints, '```' + partTwo + '```', true], [config.messages.raid.round, '```' + eventCurrentRound + '/' + config.raid.endRound + '```', true]], config.messages.raid.description, false, false, raidmonsterImage, false).then(function (reactCollectorMessage) {
+            // Save message to global eventCollectorMessage
+            eventCollectorMessage = reactCollectorMessage;
+            event.event_raid_build(eventCollectorMessage, userID, userName, messageType, userRole, msg);
+        });
+        return;
     },  
     
     /* ------------------------------------------------------------------------------ */
@@ -240,7 +309,6 @@ module.exports = {
         }
         // Check if user is allowed to fire the command
         if(userRole < 2 && manuallyFired){ // mods are allowed to start battles
-            //msg,replyType,replyUsername,senderMessageType,replyEmbedColor,replyAuthor,replyTitle,replyFields,replyDescription,replyFooter,replyThumbnail,replyImage,replyTimestamp
             chat.chat_reply(msg,'embed',userName,messageType,config.colors.error,false,config.messages.title.error,false,config.messages.notAllowedCommand,false,false,false,false);
             return;
         }
@@ -526,7 +594,6 @@ module.exports = {
             case 'egg':
                     // Check if user is allowed to fire the command
                     if(userRole < 3){ // admins are allowed to start battles
-                        //msg,replyType,replyUsername,senderMessageType,replyEmbedColor,replyAuthor,replyTitle,replyFields,replyDescription,replyFooter,replyThumbnail,replyImage,replyTimestamp
                         chat.chat_reply(msg,'embed',userName,messageType,config.colors.error,false,config.messages.title.error,false,config.messages.notAllowedCommand,false,false,false,false);
                         // Remove user from command block list to allow to fire new commands
                         check.check_remove_blocklist(userID);
@@ -552,7 +619,6 @@ module.exports = {
             case 'life':
                     // Check if user is allowed to fire the command
                     if(userRole < 3){ // admins are allowed to start battles
-                        //msg,replyType,replyUsername,senderMessageType,replyEmbedColor,replyAuthor,replyTitle,replyFields,replyDescription,replyFooter,replyThumbnail,replyImage,replyTimestamp
                         chat.chat_reply(msg,'embed',userName,messageType,config.colors.error,false,config.messages.title.error,false,config.messages.notAllowedCommand,false,false,false,false);
                         // Remove user from command block list to allow to fire new commands
                         check.check_remove_blocklist(userID);
@@ -581,7 +647,6 @@ module.exports = {
             case 'protection':
                     // Check if user is allowed to fire the command
                     if(userRole < 3){ // admins are allowed to start battles
-                        //msg,replyType,replyUsername,senderMessageType,replyEmbedColor,replyAuthor,replyTitle,replyFields,replyDescription,replyFooter,replyThumbnail,replyImage,replyTimestamp
                         chat.chat_reply(msg,'embed',userName,messageType,config.colors.error,false,config.messages.title.error,false,config.messages.notAllowedCommand,false,false,false,false);
                         // Remove user from command block list to allow to fire new commands
                         check.check_remove_blocklist(userID);
@@ -647,7 +712,9 @@ module.exports = {
         // Admin commands
         var enabledAdminCommands = []; 
         if(config.commands.battle)
-            enabledAdminCommands.push([config.messages.help.admin.battleTitle,config.messages.help.admin.battleValue,false]);
+            enabledAdminCommands.push([config.messages.help.admin.battleTitle, config.messages.help.admin.battleValue, false]);
+        if (config.commands.raid)
+            enabledAdminCommands.push([config.messages.help.admin.raidTitle, config.messages.help.admin.raidValue, false]);
         if(config.commands.destroy)
             enabledAdminCommands.push([config.messages.help.admin.destroyTitle,config.messages.help.admin.destroyValue,false]);
         if(config.commands.gift)
@@ -1023,9 +1090,14 @@ module.exports = {
             chat.chat_reply(msg,'embed',userName,messageType,config.colors.error,false,config.messages.title.error,false,config.messages.notAllowedCommand,false,false,false,false);
             return;
         }
-        // Check if currently active event is running
+        // Check if currently active battle event is running
         if(eventActive){
             chat.chat_reply(msg,'embed',userName,messageType,config.colors.error,false,config.messages.title.warning,false,config.messages.battle.active,false,false,false,false);
+            return;
+        }
+        // Check if currently active raid event is running
+        if (eventActive) {
+            chat.chat_reply(msg, 'embed', userName, messageType, config.colors.error, false, config.messages.title.warning, false, config.messages.raid.active, false, false, false, false);
             return;
         }
         // If event not active and manually fired reset round count
@@ -1683,6 +1755,11 @@ module.exports = {
             case "battle":
                 if(config.commands.battle){
                     this.command_battle(1,userID,userName,messageType,userRole,msg,partTwo);
+                }
+                return;
+            case "raid":
+                if (config.commands.raid) {
+                    this.command_raid(1, userID, userName, messageType, userRole, msg, partTwo);
                 }
                 return;
             case 'cversion':

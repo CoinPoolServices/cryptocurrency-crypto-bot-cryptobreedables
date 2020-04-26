@@ -88,6 +88,59 @@ module.exports = {
         
     },
 
+    event_raid_build: function (eventCollectorMessage, userID, userName, messageType, userRole, msg) {
+        // Create collector filter
+        const reactFilter = (reaction, user) => {
+            // Get id from current requester
+            var collectUser = user.id;
+            // If the user that clicked the icon is not a bot user
+            // If the icon is in the event icon list
+            // If raidCurrentLifePoints > 0 - If bot is already dead dont allow more attacks to be sure the last user killed the monster
+            if (collectUser != eventCollectorMessage.author.id && config.raid.attackIcons.hasOwnProperty(reaction.emoji.name) && raidCurrentLifePoints > 0) {
+                // Save users that collected to array if array does not already contain the user id (this round already attacked)
+                if (eventCurrentUsers.indexOf(collectUser) === -1) {
+                    eventCurrentUsers.push(collectUser);
+                    return true;
+                }
+            } else {
+                return false;
+            }
+        };
+        // Create collector
+        const reactCollector = eventCollectorMessage.createReactionCollector(reactFilter, { time: raidRoundTime * 1000 });
+        // Save collector to global eventCollector
+        eventCollector = reactCollector;
+        reactCollector.on('collect', (reaction, reactionCollector) => {
+            // Check icon used and attck monster by userid and mg
+            var reactIcon = reaction.emoji.name;
+            var reactUser = eventCurrentUsers[eventCurrentUsers.length - 1];
+            // Do stuff for current clicked emoji
+            this.event_raid_items(reactIcon, reactUser, eventCollectorMessage, userID, userName, messageType, userRole, msg);
+            //console.log('Icon: ' + reactIcon + ' User: ' + reactUser);
+        });
+
+        reactCollector.on('end', collected => {
+            // Only do if event active
+            if (eventActive) {
+                // Do rain here for all users that entered 
+                this.event_rain(eventCurrentUsers, msg, messageType, userID, userName, userRole);
+
+                //////////////////////////////////////////////////////////////////////////////////////////
+                // Credit user who killed the monster
+                if (raidCurrentLifePoints <= 0) {
+                    this.event_credit_kill_user(messageType, msg);
+                }
+            }
+
+        });
+        // Set icons to current global eventCollectorMessage
+        Object.keys(config.raid.attackIcons).forEach(function (k) {
+            //console.log(k + ' - ' + config.raid.attackIcons[k]);
+            eventCollectorMessage.react(config.raid.attackIcons[k]);
+        });
+
+    },
+
     event_shop_build: function(eventCollectorMessage,userID,userName,messageType,userRole,msg,partTwo){ 
         // Create collector filter
         const reactFilter = (reaction, user) => {
@@ -145,11 +198,13 @@ module.exports = {
     event_update_message: function(eventCollectorMessage,userID,userName,messageType,userRole,msg){
         // Caluclate life display from global vars
         battleCurrentLifeDisplay = '';
-        this.event_life_display(battleCurrentLifePoints); 
+        raidCurrentLifeDisplay = '';
+        this.event_life_display(battleCurrentLifePoints || raidCurrentLifePoints);
+
         // Edit current round and update lifepoints
         try {
-            chat.chat_edit_message(eventCollectorMessage,chat.chat_build_reply('embed',false,messageType,config.colors.special,false,config.messages.battle.title+' '+battleCurrentLifeDisplay,[[config.messages.battle.lifePoints,'```'+battleCurrentLifePoints+'```',true],[config.messages.battle.round,'```'+eventCurrentRound+'/'+config.battle.endRound+'```',true]],config.messages.battle.description,false,false,battleMonsterImage,false));
-        }catch(error){
+            chat.chat_edit_message(eventCollectorMessage, chat.chat_build_reply('embed', false, messageType, config.colors.special, false, config.messages.battle.title + ' ' + battleCurrentLifeDisplay, [[config.messages.battle.lifePoints, '```' + battleCurrentLifePoints + '```', true], [config.messages.battle.round, '```' + eventCurrentRound + '/' + config.battle.endRound + '```', true]], config.messages.battle.description, false, false, battleMonsterImage, false)) || (eventCollectorMessage, chat.chat_build_reply('embed', false, messageType, config.colors.special, false, config.messages.raid.title + ' ' + raidCurrentLifeDisplay, [[config.messages.raid.lifePoints, '```' + raidCurrentLifePoints + '```', true], [config.messages.raid.round, '```' + eventCurrentRound + '/' + config.raid.endRound + '```', true]], config.messages.raid.description, false, false, raidMonsterImage, false));
+        } catch (error) {
         }
     },
 
@@ -157,8 +212,9 @@ module.exports = {
         var full_hearts = 0;
         var half_heart = 0;
         var empty_hearts = 0;
-        var battleCurrentLifePointsPercentage = battleCurrentLifePoints/battleStartLifePoints*100;
-        full_hearts = battleCurrentLifePointsPercentage/10;
+        var battleCurrentLifePointsPercentage = battleCurrentLifePoints / battleStartLifePoints * 100;
+        var raidCurrentLifePointsPercentage = raidCurrentLifePoints / raidStartLifePoints * 100;
+        full_hearts = battleCurrentLifePointsPercentage / 10 || raidCurrentLifePointsPercentage / 10;
         if (full_hearts !== ~~full_hearts)
         {
             full_hearts = ~~full_hearts;
@@ -168,21 +224,27 @@ module.exports = {
             full_hearts = 0;
             half_heart = 0;
         }
+        if (raidCurrentLifePoints <= 0) {
+            full_hearts = 0;
+            half_heart = 0;
+        }
         empty_hearts = 10 - full_hearts - half_heart; 
-        /*
-        log.log_write_console('percentage:' + battleCurrentLifePointsPercentage);
-        log.log_write_console('full_hearts:' + full_hearts);
-        log.log_write_console('half_heart:' + half_heart);
-        log.log_write_console('empty_hearts:' + empty_hearts);
-        */
+
+        //Battle heart
         for (i = 0; i < full_hearts; i++)
             battleCurrentLifeDisplay += config.battle.lifeIcons.fullHeart;
-
         if (half_heart) 
             battleCurrentLifeDisplay += config.battle.lifeIcons.halfHeart;
-
         for (i = 0; i < empty_hearts; i++) 
             battleCurrentLifeDisplay += config.battle.lifeIcons.emptyHeart;
+
+        //Raid heart 
+        for (i = 0; i < full_hearts; i++)
+            raidCurrentLifeDisplay += config.raid.lifeIcons.fullHeart;
+        if (half_heart)
+            raidCurrentLifeDisplay += config.raid.lifeIcons.halfHeart;
+        for (i = 0; i < empty_hearts; i++)
+            raidCurrentLifeDisplay += config.raid.lifeIcons.emptyHeart;
     },
 
     event_destroy: function(manuallyFired,event){
@@ -1109,6 +1171,325 @@ module.exports = {
 
     },
 
+    event_raid_items: async function (reactIcon, reactUser, eventCollectorMessage, userID, userName, messageType, userRole, msg) {
+
+        //////////////////////////////////////////////////////////////////////////////////////////
+        // Get user data from local storage and config
+
+        // Get user data
+        var getUserData = await this.event_get_user_data(reactUser, messageType, msg);
+
+        // User level
+        var userLevel = getUserData.level;
+        if (userLevel === undefined)
+            return;
+
+        // User exp
+        var userExp = getUserData.exp;
+        if (userExp === undefined)
+            return;
+
+        // Next level exp
+        var nextLevel = new Big(userLevel).plus(1);
+        var nextLevelExp = config.userLevel[Big(nextLevel).toString()];
+
+        // User health
+        var userHealth = getUserData.health;
+        if (userHealth === undefined)
+            return;
+
+        var userRezHealth = getUserData.rezHealth;
+        if (userRezHealth === undefined)
+            return;
+
+        // User divineShield
+        var divineShieldCount = getUserData.items.divineShield.count;
+        var divineShieldHealth = getUserData.items.divineShield.health;
+        if (divineShieldCount === undefined || divineShieldHealth === undefined)
+            return;
+
+        // User attack items
+        var userAttackItems = getUserData.attackItems;
+        if (userAttackItems === undefined)
+            return;
+
+        //////////////////////////////////////////////////////////////////////////////////////////
+        // Check if user is dead
+        if (userHealth <= 0) {
+            chat.chat_reply(msg, 'normal', '<@' + reactUser + '>', messageType, false, false, false, false, config.messages.raid.dead + ' ' + config.rez.chatIcons.rez + ' ' + config.messages.raid.dead2, false, false, false, false);
+            log.log_write_game(config.messages.raid.log.action, config.messages.raid.log.user + ' ' + reactUser + ' - ' + config.messages.raid.dead + ' ' + config.rez.chatIcons.rez + ' ' + config.messages.raid.dead2);
+            // Remove user from current user array so no rain if dead!
+            let deadUserRemove = [reactUser]
+            eventCurrentUsers = eventCurrentUsers.filter(item => !deadUserRemove.includes(item))
+            return;
+        }
+
+        //////////////////////////////////////////////////////////////////////////////////////////
+        // Attack by possible attack items from config
+        var attack = config.items.attack;
+        // Reacht on icons
+        switch (reactIcon) {
+            case 'sword':
+                //////////////////////////////////////////////////////////////////////////////////////////
+                // Attack the monster by click on sword icon
+                var attackMonsterMessage = '';
+                // Culculate damage by level and get attack setting from config
+                var damage = attack.damage;
+                var triggerChance = attack.triggerChance;
+                if (userLevel <= attack.levelMultiplier1)
+                    damage += userLevel * attack.levelMultiplierSmallerEqual1
+                if (userLevel > attack.levelMultiplier1 && userLevel <= attack.levelMultiplier2)
+                    damage += userLevel * attack.levelMultiplierBigger1SmallerEqual2
+                if (userLevel > attack.levelMultiplier2 && userLevel <= attack.levelMultiplier3)
+                    damage += userLevel * attack.levelMultiplierBigger2SmallerEqual3
+                if (userLevel > attack.levelMultiplier3)
+                    damage += userLevel * attack.levelMultiplierBigger3
+                var randomPercentage = check.check_random_from_to(attack.randomPlusMinusPercentage.from, attack.randomPlusMinusPercentage.to);
+                damage = damage + (damage / 100 * randomPercentage);
+                damage = Math.floor(damage);
+                // User calculate hit chance and hit if true else only message without update message
+                var checkTriggerChance = check.check_chance_bool(triggerChance);
+                if (checkTriggerChance) {
+
+                    //////////////////////////////////////////////////////////////////////////////////////////
+                    // Reduce damage based on user health in % - userHealth - userRezHealth
+
+                    var userHealthPercentage = Big(userHealth).div(userRezHealth).times(100).toFixed(0);
+                    var damage = Big(damage).div(100).times(userHealthPercentage).toFixed(0);
+
+                    //////////////////////////////////////////////////////////////////////////////////////////
+                    // Check if crit attack and edit message
+                    var checkTriggerCrit = check.check_chance_bool(config.items.attack.critDamage.chance);
+                    if (checkTriggerCrit) {
+                        var checkCritMultiplier = check.check_random_from_to(config.items.attack.critDamage.multiplier.from, config.items.attack.critDamage.multiplier.to);
+                        var damageCritText = config.messages.raid.attackCrit + ' ' + checkCritMultiplier + config.messages.raid.attackCrit2 + damage + config.messages.raid.attackCrit3;
+                        damage = new Big(damage).times(checkCritMultiplier);
+                        damageCritText += ' ' + damage;
+                    } else {
+                        damageCritText = damage;
+                    }
+
+                    // Hit monster message
+                    attackMonsterMessage += config.messages.raid.attackHit + ' ' + damageCritText + ' ' + config.raid.chatIcons.sword + ' (' + userHealthPercentage + '%)';
+                    // Calculate new exp and credite user with exp from fight
+                    var creditExp = check.check_random_from_to(config.raid.triggerExp.min, config.raid.triggerExp.max);
+                    var newExp = new Big(userExp).plus(creditExp);
+                    // Write new exp
+                    var writeNewExp = await storage.storage_write_local_storage(reactUser, 'games.cryptobreedables.exp', newExp);
+                    // If not possible to write new exp
+                    if (!writeNewExp) {
+                        // If fail to write new exp
+                        chat.chat_reply(msg, 'embed', '<@' + reactUser + '>', messageType, config.colors.error, false, config.messages.title.error, false, config.messages.wentWrong, false, false, false, false);
+                        return;
+                    }
+                    attackMonsterMessage += " (+" + creditExp + ' ' + config.messages.raid.exp + ")";
+                    // Attack monster with user dmg here
+                    raidCurrentLifePoints = new Big(raidCurrentLifePoints).minus(damage);
+
+                } else {
+                    // Miss monster message
+                    attackMonsterMessage += config.messages.raid.attackMiss;
+                    // Calculate new exp and credite user with exp from miss fight
+                    var creditExp = check.check_random_from_to(config.raid.triggerFailExp.min, config.raid.triggerFailExp.max);
+                    var newExp = new Big(userExp).plus(creditExp);
+                    // Write new exp
+                    var writeNewExp = await storage.storage_write_local_storage(reactUser, 'games.cryptobreedables.exp', newExp);
+                    // If not possible to write new exp
+                    if (!writeNewExp) {
+                        // If fail to write new exp
+                        chat.chat_reply(msg, 'embed', '<@' + reactUser + '>', messageType, config.colors.error, false, config.messages.title.error, false, config.messages.wentWrong, false, false, false, false);
+                        return;
+                    }
+                    attackMonsterMessage += " (+" + creditExp + ' ' + config.messages.raid.exp + ")";
+                }
+
+                ////////////////////////////////////
+                ////////////////////////////////////
+                ////////////////////////////////////
+                /* Attack items */
+                // once foreach type (key), update activeID (level and exp)
+                ////////////////////////////////////
+                ////////////////////////////////////
+                ////////////////////////////////////
+
+                for (const [key, value] of Object.entries(userAttackItems)) {
+                    var attackItem = key;
+                    var attackItemActiveID = value.activeID;
+                    var attackItemActiveItemLevel = value[attackItemActiveID].level;
+                    var attackItemActiveItemExp = value[attackItemActiveID].exp;
+
+                    //log.log_write_console('Attack Item: '+attackItem);
+                    //log.log_write_console('Attack Item Active ID: '+attackItemActiveID);
+                    //log.log_write_console('Attack Item Active Level: '+attackItemActiveItemLevel);
+                    //log.log_write_console('Attack Item Active EXP: '+attackItemActiveItemExp);
+
+                    // Culculate damage by level and get attack setting from config
+                    var attackItemActiveDamage = config.items[attackItem].damage;
+                    var attackItemActiveTriggerChance = config.items[attackItem].triggerChance;
+                    //log.log_write_console('Attack Item Active Damage: '+attackItemActiveDamage);
+                    //log.log_write_console('Attack Item Active TriggerChance: '+attackItemActiveTriggerChance);
+                    if (attackItemActiveItemLevel <= config.items[attackItem].levelMultiplier1)
+                        attackItemActiveDamage += attackItemActiveItemLevel * config.items[attackItem].levelMultiplierSmallerEqual1
+                    if (attackItemActiveItemLevel > config.items[attackItem].levelMultiplier1 && attackItemActiveItemLevel <= config.items[attackItem].levelMultiplier2)
+                        attackItemActiveDamage += attackItemActiveItemLevel * config.items[attackItem].levelMultiplierBigger1SmallerEqual2
+                    if (attackItemActiveItemLevel > config.items[attackItem].levelMultiplier2 && attackItemActiveItemLevel <= config.items[attackItem].levelMultiplier3)
+                        attackItemActiveDamage += attackItemActiveItemLevel * config.items[attackItem].levelMultiplierBigger2SmallerEqual3
+                    if (attackItemActiveItemLevel > config.items[attackItem].levelMultiplier3)
+                        attackItemActiveDamage += attackItemActiveItemLevel * config.items[attackItem].levelMultiplierBigger3
+                    var attackItemActiveRandomPercentage = check.check_random_from_to(config.items[attackItem].randomPlusMinusPercentage.from, config.items[attackItem].randomPlusMinusPercentage.to);
+                    attackItemActiveDamage = attackItemActiveDamage + (attackItemActiveDamage / 100 * attackItemActiveRandomPercentage);
+                    attackItemActiveDamage = Math.floor(attackItemActiveDamage);
+                    //log.log_write_console('Attack Item Active Damage By Level: '+attackItemActiveDamage);
+
+                    // Item calculate hit chance and hit if true else only message without update message
+                    var attackItemActiveCheckTriggerChance = check.check_chance_bool(attackItemActiveTriggerChance);
+                    if (attackItemActiveCheckTriggerChance) {
+                        // Item hit
+                        //log.log_write_console('Attack Item Active Hit');
+
+                        //////////////////////////////////////////////////////////////////////////////////////////
+                        // Reduce damage based on user health in % - userHealth - userRezHealth
+
+                        var userHealthPercentage = Big(userHealth).div(userRezHealth).times(100).toFixed(0);
+                        var attackItemActiveDamage = Big(attackItemActiveDamage).div(100).times(userHealthPercentage).toFixed(0);
+
+                        //////////////////////////////////////////////////////////////////////////////////////////
+                        // Check if crit attack and edit message
+                        var attackItemActiveCheckTriggerCrit = check.check_chance_bool(config.items[attackItem].critDamage.chance);
+                        if (attackItemActiveCheckTriggerCrit) {
+                            var attackItemActiveCheckCritMultiplier = check.check_random_from_to(config.items[attackItem].critDamage.multiplier.from, config.items[attackItem].critDamage.multiplier.to);
+                            var attackItemActiveDamageCritText = config.messages.raid.attackItemCrit + ' ' + attackItemActiveCheckCritMultiplier + config.messages.raid.attackItemCrit2 + attackItemActiveDamage + config.messages.raid.attackItemCrit3;
+                            attackItemActiveDamage = new Big(attackItemActiveDamage).times(attackItemActiveCheckCritMultiplier);
+                            attackItemActiveDamageCritText += ' ' + attackItemActiveDamage;
+                        } else {
+                            attackItemActiveDamageCritText = attackItemActiveDamage;
+                        }
+
+                        // Random attack name and icon if not empty
+                        var attackItemText = "";
+                        var attackItemActiveItemAttacks = config.items[attackItem].attacks;
+                        // If attacks are defined grab a random one for attack
+                        if (attackItemActiveItemAttacks.length > 0) {
+                            var attackItemActiveItemAttack = check.check_getRandomFromArray(attackItemActiveItemAttacks, 1)[0];
+                            //log.log_write_console(attackItemActiveItemAttack[0]);
+                            //log.log_write_console(attackItemActiveItemAttack[1]);
+                            attackItemText = config.messages.raid.attackItemHit3 + ' ' + attackItemActiveItemAttack[1] + '`' + attackItemActiveItemAttack[0] + '` ';
+                        }
+
+                        // Hit monster message
+                        attackMonsterMessage += '. ' + config.messages.battle.attackItemHit + '' + config.items[attackItem].chatIcons[attackItem] + '`' + attackItem.charAt(0).toUpperCase() + attackItem.slice(1) + '` ' + config.messages.battle.attackItemHit2 + ' ' + attackItemText + config.messages.battle.attackItemHit4 + ' ' + attackItemActiveDamageCritText + ' ' + config.battle.chatIcons.sword + ' (' + userHealthPercentage + '%)';
+
+                        // Calculate new exp and credite item with exp from fight
+                        var attackItemActiveCreditExp = check.check_random_from_to(config.raid.triggerItemExp.min, config.raid.triggerItemExp.max);
+                        var attackItemActiveNewExp = new Big(attackItemActiveItemExp).plus(attackItemActiveCreditExp);
+                        // Write new exp
+                        var writeAttackItemActiveNewExp = await storage.storage_write_local_storage(reactUser, 'games.cryptobreedables.attackItems.' + attackItem + '.' + attackItemActiveID + '.exp', attackItemActiveNewExp);
+                        // If not possible to write new exp
+                        if (!writeAttackItemActiveNewExp) {
+                            // If fail to write new exp
+                            chat.chat_reply(msg, 'embed', '<@' + reactUser + '>', messageType, config.colors.error, false, config.messages.title.error, false, config.messages.wentWrong, false, false, false, false);
+                            return;
+                        }
+
+                        attackMonsterMessage += " (+" + attackItemActiveCreditExp + ' ' + config.messages.raid.exp + ")";
+                        // Attack monster with user dmg here
+                        raidCurrentLifePoints = new Big(raidCurrentLifePoints).minus(attackItemActiveDamage);
+
+                    } else {
+                        // Item miss
+                        //log.log_write_console('Attack Item Active Miss');
+
+                        // Miss monster message
+                        attackMonsterMessage += '. ' + config.messages.raid.attackItemHit + '' + config.items[attackItem].chatIcons[attackItem] + '`' + attackItem.charAt(0).toUpperCase() + attackItem.slice(1) + '` ' + config.messages.raid.attackItemMiss;
+
+                        // Calculate new exp and credite item with exp from fight
+                        var attackItemActiveCreditExp = check.check_random_from_to(config.raid.triggerItemFailExp.min, config.raid.triggerItemFailExp.max);
+                        var attackItemActiveNewExp = new Big(attackItemActiveItemExp).plus(attackItemActiveCreditExp);
+                        // Write new exp
+                        var writeAttackItemActiveNewExp = await storage.storage_write_local_storage(reactUser, 'games.cryptobreedables.attackItems.' + attackItem + '.' + attackItemActiveID + '.exp', attackItemActiveNewExp);
+                        // If not possible to write new exp
+                        if (!writeAttackItemActiveNewExp) {
+                            // If fail to write new exp
+                            chat.chat_reply(msg, 'embed', '<@' + reactUser + '>', messageType, config.colors.error, false, config.messages.title.error, false, config.messages.wentWrong, false, false, false, false);
+                            return;
+                        }
+
+                        attackMonsterMessage += " (+" + attackItemActiveCreditExp + ' ' + config.messages.battle.exp + ")";
+
+                    }
+
+                    // Update message after damage is done and hit chance did hit
+                    this.event_update_message(eventCollectorMessage, userID, userName, messageType, userRole, msg);
+
+                    ////////////////////////////////////
+                    /* Attack items check and update level and on level up send message to chat */
+                    // once foreach type (key), update activeID (level and exp)
+                    ////////////////////////////////////
+
+                    // Next level exp
+                    var attackItemActiveNextLevel = new Big(attackItemActiveItemLevel).plus(1);
+                    var attackItemActiveNextLevelExp = config.itemLevel[Big(attackItemActiveNextLevel).toString()];
+                    //log.log_write_console('Attack Item Active Next Level: '+attackItemActiveNextLevel);
+                    //log.log_write_console('Attack Item Active Next Level EXP: '+attackItemActiveNextLevelExp);
+
+                    ////////////////////////////////////
+
+                    //////////////////////////////////////////////////////////////////////////////////////////
+                    // Check and update item level and on level up send message to chat 
+
+                    if (Big(attackItemActiveNewExp).gt(attackItemActiveNextLevelExp)) {
+                        this.event_update_item_level(reactUser, attackItem, attackItemActiveID, attackItemActiveNextLevel, messageType, msg);
+                    }
+
+                }
+
+                ////////////////////////////////////
+                ////////////////////////////////////
+                ////////////////////////////////////
+
+                break;
+            default:
+                return;
+        }
+
+        //////////////////////////////////////////////////////////////////////////////////////////
+        // Attack monster message
+        attackMonsterMessage += config.messages.raid.textEnd;
+        chat.chat_reply(msg, 'normal', '<@' + reactUser + '>', messageType, false, false, false, false, attackMonsterMessage, false, false, false, false);
+        log.log_write_game(config.messages.raid.log.action, config.messages.raid.log.user + ' ' + reactUser + ' - ' + attackMonsterMessage);
+
+        //////////////////////////////////////////////////////////////////////////////////////////
+        // Monster attack - Check if monster trigger or fail to attack user
+        var checkTriggerMonster = check.check_chance_bool(config.monster.triggerChance);
+        if (checkTriggerMonster) {
+
+            //////////////////////////////////////////////////////////////////////////////////////////
+            // Check if user owns a divineShield and if it triggeres and protect from attack
+            var checkTriggerDivineShield = check.check_chance_bool(config.items.divineShield.trigger_chance);
+            if (divineShieldCount > 0 && checkTriggerDivineShield) {
+
+                //////////////////////////////////////////////////////////////////////////////////////////
+                // Divine shield triggered and protects user
+                this.event_divine_shield(reactUser, divineShieldHealth, divineShieldCount, messageType, msg);
+
+            } else {
+
+                //////////////////////////////////////////////////////////////////////////////////////////
+                // Monster hit the user
+                this.event_monster_attack(reactUser, messageType, msg);
+
+            }
+        }
+
+        //////////////////////////////////////////////////////////////////////////////////////////
+        // Check and update user level and on level up send message to chat 
+
+        if (Big(newExp).gt(nextLevelExp)) {
+            this.event_update_user_level(reactUser, nextLevel, messageType, msg);
+        }
+
+    },
+
     event_divine_shield: async function(reactUser,divineShieldHealth,divineShieldCount,messageType,msg){
         var divineShieldMessage = '';
         divineShieldMessage += config.messages.divineShield.protect+' '+config.items.divineShield.chatIcons.divineShield+' '+config.messages.divineShield.protect2;
@@ -1207,7 +1588,7 @@ module.exports = {
             return;  
         }
         // Calculate new exp and credite user with exp from miss fight
-        var creditExp = check.check_random_from_to(config.battle.triggerKillExp.min,config.battle.triggerKillExp.max);
+        var creditExp = check.check_random_from_to(config.battle.triggerKillExp.min, config.battle.triggerKillExp.max) || check.check_random_from_to(config.raid.triggerKillExp.min, config.raid.triggerKillExp.max);
         var newExp = new Big(userExp).plus(creditExp);
         // Write new exp
         var writeNewExp = await storage.storage_write_local_storage(killUser,'games.cryptobreedables.exp',newExp); 
@@ -1217,7 +1598,7 @@ module.exports = {
             chat.chat_reply(msg,'embed','<@'+killUser+'>',messageType,config.colors.error,false,config.messages.title.error,false,config.messages.wentWrong,false,false,false,false);
             return;
         }
-        killMonsterMessage += " (+"+creditExp+' '+config.messages.battle.exp+")"+config.messages.battle.textEnd;
+        killMonsterMessage += " (+" + creditExp + ' ' + config.messages.battle.exp + ")" + config.messages.battle.textEnd || " (+" + creditExp + ' ' + config.messages.raid.exp + ")" + config.messages.raid.textEnd;
 
         // Save kill to user stats
         var newKills = new Big(userKills).plus(1);
@@ -1286,7 +1667,7 @@ module.exports = {
         }
         monsterHitMessage += config.messages.monster.attackHit+" "+triggerDamage+config.monster.chatIcons.blood+config.messages.monster.attackHit2+" "+config.rez.chatIcons.fullHeart+' '+config.messages.monster.health+' '+newHealth+"/"+userRezHealth+config.messages.monster.textEnd;
         chat.chat_reply(msg,'normal','<@'+reactUser+'>',messageType,false,false,false,false,monsterHitMessage,false,false,false,false);
-        log.log_write_game(config.messages.battle.log.action,config.messages.battle.log.user+' '+reactUser+' - '+monsterHitMessage);
+        log.log_write_game(config.messages.battle.log.action, config.messages.battle.log.user + ' ' + reactUser + ' - ' + monsterHitMessage) || log.log_write_game(config.messages.raid.log.action, config.messages.raid.log.user + ' ' + reactUser + ' - ' + monsterHitMessage);
         // If dead
         if(newHealth <= 0){
             // Save death to user stats
@@ -1307,10 +1688,10 @@ module.exports = {
     },
 
     event_drop: async function(dropUsers,msg,messageType,userID,userName,userRole){
-        var checkTriggerDrop = check.check_chance_bool(config.battle.drop.chance);
+        var checkTriggerDrop = check.check_chance_bool(config.battle.drop.chance || config.raid.drop.chance);
         if(checkTriggerDrop && dropUsers.length > 0){
             var randomDropUser = check.check_getRandomFromArray(dropUsers,1)[0];
-            var randomDropItem = check.check_getRandomFromArray(config.battle.drop.itemList,1)[0];
+            var randomDropItem = check.check_getRandomFromArray(config.battle.drop.itemList, 1 || config.raid.drop.itemList, 1)[0];
             // Get receiver user data
             var getReceiverUserData = await this.event_get_user_data(randomDropUser,messageType,msg);
             var userReceiverEggs = getReceiverUserData.items.eggs;
@@ -1324,8 +1705,8 @@ module.exports = {
             switch (randomDropItem) {
                 case 'egg':
                     // Credit user with item
-                    dropItem = config.messages.battle.drop.egg;
-                    dropIcon = config.battle.chatIcons.egg;
+                    dropItem = config.messages.battle.drop.egg || config.messages.raid.drop.egg;
+                    dropIcon = config.battle.chatIcons.egg || config.battle.chatIcons.box;
                     var newCreditItemValue = new Big(userReceiverEggs).plus(1);
                     var creditNewValue = await storage.storage_write_local_storage(randomDropUser,'games.cryptobreedables.items.eggs',newCreditItemValue); 
                     if(!creditNewValue){ 
@@ -1334,8 +1715,8 @@ module.exports = {
                     break;
                 case 'box':
                     // Credit user with item
-                    dropItem = config.messages.battle.drop.box;
-                    dropIcon = config.battle.chatIcons.box;
+                    dropItem = config.messages.battle.drop.box || config.messages.raid.drop.box;
+                    dropIcon = config.battle.chatIcons.box || config.raid.chatIcons.box;
                     var newCreditItemValue = new Big(userReceiverBoxes).plus(1);
                     var creditNewValue = await storage.storage_write_local_storage(randomDropUser,'games.cryptobreedables.items.boxes',newCreditItemValue); 
                     if(!creditNewValue){ 
@@ -1344,8 +1725,8 @@ module.exports = {
                     break;
                 case 'divineshield':
                     // Credit user with item
-                    dropItem = config.messages.battle.drop.divineShield;
-                    dropIcon = config.battle.chatIcons.divineShield;
+                    dropItem = config.messages.battle.drop.divineShield || config.messages.raid.drop.divineShield;
+                    dropIcon = config.battle.chatIcons.divineShield || config.raid.chatIcons.divineShield;
                     var newCreditItemValue = new Big(userReceiverDivineShields).plus(1);
                     var creditNewValue = await storage.storage_write_local_storage(randomDropUser,'games.cryptobreedables.items.divineShield.count',newCreditItemValue); 
                     if(!creditNewValue){ 
@@ -1363,8 +1744,8 @@ module.exports = {
                     break;
                 case 'lifeincreasepotion':
                     // Credit user with item
-                    dropItem = config.messages.battle.drop.lifeIncreasePotion;
-                    dropIcon = config.battle.chatIcons.lifeIncreasePotion;
+                    dropItem = config.messages.battle.drop.lifeIncreasePotion || config.messages.raid.drop.lifeIncreasePotion;
+                    dropIcon = config.battle.chatIcons.lifeIncreasePotion || config.raid.chatIcons.lifeIncreasePotion;
                     var newCreditItemValue = new Big(userReceiverLifeIncreasePotions).plus(1);
                     var creditNewValue = await storage.storage_write_local_storage(randomDropUser,'games.cryptobreedables.items.lifeIncreasePotions',newCreditItemValue); 
                     if(!creditNewValue){ 
@@ -1373,8 +1754,8 @@ module.exports = {
                     break;
                 case 'healpotion':
                     // Credit user with item
-                    dropItem = config.messages.battle.drop.healPotion;
-                    dropIcon = config.battle.chatIcons.healPotion;
+                    dropItem = config.messages.battle.drop.healPotion || config.messages.raid.drop.healPotion;
+                    dropIcon = config.battle.chatIcons.healPotion || config.raid.chatIcons.healPotion;
                     var newCreditItemValue = new Big(userReceiverHealPotions).plus(1);
                     var creditNewValue = await storage.storage_write_local_storage(randomDropUser,'games.cryptobreedables.items.healPotions',newCreditItemValue); 
                     if(!creditNewValue){ 
@@ -1385,8 +1766,8 @@ module.exports = {
                     return;
             }  
             // Message
-            chat.chat_reply(msg,'normal','<@'+randomDropUser+'>',messageType,false,false,false,false,config.messages.battle.drop.success+' '+dropIcon+' `'+dropItem+'` '+config.messages.battle.drop.success1,false,false,false,false);
-            log.log_write_game(config.messages.battle.log.drop,config.messages.battle.log.user+' '+randomDropUser+' - '+config.messages.battle.drop.success+' '+dropIcon+' `'+dropItem+'` '+config.messages.battle.drop.success1);
+            chat.chat_reply(msg, 'normal', '<@' + randomDropUser + '>', messageType, false, false, false, false, config.messages.battle.drop.success + ' ' + dropIcon + ' `' + dropItem + '` ' + config.messages.battle.drop.success1, false, false, false, false) || msg, 'normal', '<@' + randomDropUser + '>', messageType, false, false, false, false, config.messages.raid.drop.success + ' ' + dropIcon + ' `' + dropItem + '` ' + config.messages.raid.drop.success1, false, false, false, false);
+            log.log_write_game(config.messages.battle.log.drop, config.messages.battle.log.user + ' ' + randomDropUser + ' - ' + config.messages.battle.drop.success + ' ' + dropIcon + ' `' + dropItem + '` ' + config.messages.battle.drop.success1) || config.messages.raid.log.drop, config.messages.raid.log.user + ' ' + randomDropUser + ' - ' + config.messages.raid.drop.success + ' ' + dropIcon + ' `' + dropItem + '` ' + config.messages.raid.drop.success1);
         }
         return;
     },
@@ -1395,15 +1776,15 @@ module.exports = {
         var coinsCredited = 1;
         var coinsTransactionSaved = 1;
         var failedToCreditMessage = "";
-        var rainSuccessfulMessage = config.messages.battle.rain.success;
+        var rainSuccessfulMessage = config.messages.battle.rain.success || config.messages.raid.rain.success;
         // Check rain chance and if users to rain
-        var checkTriggerRain = check.check_chance_bool(config.battle.rain.chance);
+        var checkTriggerRain = check.check_chance_bool(config.battle.rain.chance || config.raid.rain.chance);
         if(checkTriggerRain && eventCurrentUsers.length > 0){
             var index;
-            var totalRainValue = Big(check.check_random_from_to_floating(config.battle.rain.min,config.battle.rain.max,config.battle.rain.floating)).div(config.battle.endRound);
+            var totalRainValue = Big(check.check_random_from_to_floating(config.battle.rain.min, config.battle.rain.max, config.battle.rain.floating || config.raid.rain.min, config.raid.rain.max, config.raid.rain.floating)).div(config.battle.endRound || config.raid.endRound);
             var rainUserCount = rainUsers.length;
             var userRainValue = new Big(totalRainValue).div(rainUserCount).toFixed(8);
-            rainSuccessfulMessage += " "+config.battle.chatIcons.coins+" `"+new Big(totalRainValue).toFixed(8)+"` "+config.bot.coinName+' ('+config.bot.coinSymbol+") "+config.messages.battle.rain.success1+" `"+rainUserCount+"` "+config.messages.battle.rain.success2+' ';
+            rainSuccessfulMessage += " " + config.battle.chatIcons.coins + " `" + new Big(totalRainValue).toFixed(8) + "` " + config.bot.coinName + ' (' + config.bot.coinSymbol + ") " + config.messages.battle.rain.success1 + " `" + rainUserCount + "` " + config.messages.battle.rain.success2 + ' ' || " " + config.raid.chatIcons.coins + " `" + new Big(totalRainValue).toFixed(8) + "` " + config.bot.coinName + ' (' + config.bot.coinSymbol + ") " + config.messages.raid.rain.success1 + " `" + rainUserCount + "` " + config.messages.raid.rain.success2 + ' ';
             for (index = 0; index < rainUsers.length; ++index) {
                 rainUser = rainUsers[index];
                 // Credit balance to user
@@ -1418,7 +1799,7 @@ module.exports = {
                 }
                 rainSuccessfulMessage += "<@"+rainUser+">, ";
             };
-            rainSuccessfulMessage += config.battle.chatIcons.coins+" `"+userRainValue+"` "+config.bot.coinName+' ('+config.bot.coinSymbol+") "+config.messages.battle.rain.success3;
+            rainSuccessfulMessage += config.battle.chatIcons.coins + " `" + userRainValue + "` " + config.bot.coinName + ' (' + config.bot.coinSymbol + ") " + config.messages.battle.rain.success3 || config.raid.chatIcons.coins + " `" + userRainValue + "` " + config.bot.coinName + ' (' + config.bot.coinSymbol + ") " + config.messages.raid.rain.success3;
             // If credit failed or save of transaction history to db failed
             if(coinsCredited == 0 || coinsTransactionSaved == 0){
                 failedToCreditMessage += config.messages.walletFailed;
@@ -1426,7 +1807,7 @@ module.exports = {
             rainSuccessfulMessage += " "+failedToCreditMessage;
             // Send output
             chat.chat_reply(msg,'normal',false,messageType,false,false,false,false,rainSuccessfulMessage,false,false,false,false);
-            log.log_write_game(config.messages.battle.log.rain,rainSuccessfulMessage);
+            log.log_write_game(config.messages.battle.log.rain, rainSuccessfulMessage || config.messages.raid.log.rain, rainSuccessfulMessage);
 
             // Add same rain value for users to jackpot
             ///////////////////////////////////////////
@@ -1438,14 +1819,14 @@ module.exports = {
                 // Add rain value to jackpot
                 var newJackpotValue = new Big(currentJackpotValue).plus(userRainValue).toFixed(8);
                 var creditNewJackpotValue = await storage.storage_write_jackpot('value',newJackpotValue); 
-                var rainMessage = config.battle.chatIcons.jackpot+" "+config.messages.battle.jackpot.success+" "+config.battle.chatIcons.coins+" `"+new Big(userRainValue).toFixed(8)+"` "+config.bot.coinName+' ('+config.bot.coinSymbol+") "+config.messages.battle.jackpot.success1+" "+config.messages.battle.jackpot.success2+" "+config.battle.chatIcons.coins+" `"+newJackpotValue+"` "+config.bot.coinName+' ('+config.bot.coinSymbol+") "+config.messages.battle.jackpot.success3;
+                var rainMessage = config.battle.chatIcons.jackpot + " " + config.messages.battle.jackpot.success + " " + config.battle.chatIcons.coins + " `" + new Big(userRainValue).toFixed(8) + "` " + config.bot.coinName + ' (' + config.bot.coinSymbol + ") " + config.messages.battle.jackpot.success1 + " " + config.messages.battle.jackpot.success2 + " " + config.battle.chatIcons.coins + " `" + newJackpotValue + "` " + config.bot.coinName + ' (' + config.bot.coinSymbol + ") " + config.messages.battle.jackpot.success3 || config.raid.chatIcons.jackpot + " " + config.messages.raid.jackpot.success + " " + config.raid.chatIcons.coins + " `" + new Big(userRainValue).toFixed(8) + "` " + config.bot.coinName + ' (' + config.bot.coinSymbol + ") " + config.messages.raid.jackpot.success1 + " " + config.messages.raid.jackpot.success2 + " " + config.raid.chatIcons.coins + " `" + newJackpotValue + "` " + config.bot.coinName + ' (' + config.bot.coinSymbol + ") " + config.messages.raid.jackpot.success3;;
                 // If not possible to write new health
                 if(!creditNewJackpotValue){ 
                     // Failed to credit rain to jackpot
                 }else{
                     // Success message for jackpot rain
                     chat.chat_reply(msg,'normal',false,messageType,false,false,false,false,rainMessage,false,false,false,false);
-                    log.log_write_game(config.messages.battle.log.rainjackpot,rainMessage);
+                    log.log_write_game(config.messages.battle.log.rainjackpot, rainMessage || config.messages.raid.log.rainjackpot, rainMessage);
                 }
             }
 
@@ -1459,16 +1840,19 @@ module.exports = {
         // Delete event message
         chat.chat_delete_message(eventCollectorMessage);
         // Check if win
-        if(battleCurrentLifePoints <= 0){
-            chat.chat_reply(msg,'image',false,false,false,false,false,false,false,false,false,config.battle.victory_img,false);
-            log.log_write_game(config.messages.battle.log.action,config.messages.battle.log.user+' '+config.messages.battle.log.win);
+        if (battleCurrentLifePoints <= 0 || raidCurrentLifePoints <= 0){
+            chat.chat_reply(msg, 'image', false, false, false, false, false, false, false, false, false, config.battle.victory_img, false || msg, 'image', false, false, false, false, false, false, false, false, false, config.raid.victory_img, false);
+            log.log_write_game(config.messages.battle.log.action, config.messages.battle.log.user + ' ' + config.messages.battle.log.win || config.messages.raid.log.action, config.messages.raid.log.user + ' ' + config.messages.raid.log.win);
             // Kill message
-            killMonsterMessage = config.messages.battle.kill;
+            killMonsterMessage = config.messages.battle.kill || config.messages.raid.kill;
             // Reset round counter
-            eventCurrentRound = battleStartRound;
+            eventCurrentRound = battleStartRound || raidStartRound;
             // Auto health update
             if(config.battle.cron.autoHealth.enabled){
                 battleHealthAuto = battleHealthAuto+config.battle.cron.autoHealth.value;
+            }
+            if (config.raid.cron.autoHealth.enabled) {
+                raidHealthAuto = raidHealthAuto + config.raid.cron.autoHealth.value;
             }
             // If event still active
             if(eventActive)
@@ -1476,16 +1860,22 @@ module.exports = {
             return;
         }
         // Check if defeat
-        if(eventCurrentRound >= battleEndRound){
-            chat.chat_reply(msg,'image',false,false,false,false,false,false,false,false,false,config.battle.defense_img,false);
-            log.log_write_game(config.messages.battle.log.action,config.messages.battle.log.user+' '+config.messages.battle.log.loss);
+        if (eventCurrentRound >= battleEndRound || eventCurrentRound >= raidEndRound){
+            chat.chat_reply(msg, 'image', false, false, false, false, false, false, false, false, false, config.battle.defense_img, false || msg, 'image', false, false, false, false, false, false, false, false, false, config.raid.defense_img, false);
+            log.log_write_game(config.messages.battle.log.action, config.messages.battle.log.user + ' ' + config.messages.battle.log.loss || config.messages.raid.log.action, config.messages.raid.log.user + ' ' + config.messages.raid.log.loss);
             // Reset round counter
-            eventCurrentRound = battleStartRound;
+            eventCurrentRound = battleStartRound || raidStartRound;
             // Auto health update
             if(config.battle.cron.autoHealth.enabled){
                 battleHealthAuto = battleHealthAuto-config.battle.cron.autoHealth.value;
                 if(battleHealthAuto < config.battle.cron.monsterHealth.min){
                     battleHealthAuto = config.battle.cron.monsterHealth.min;
+                }
+            }
+            if (config.raid.cron.autoHealth.enabled) {
+                raidHealthAuto = raidHealthAuto - config.raid.cron.autoHealth.value;
+                if (raidHealthAuto < config.raid.cron.monsterHealth.min) {
+                    raidHealthAuto = config.raid.cron.monsterHealth.min;
                 }
             }
             // If event still active
@@ -1499,6 +1889,9 @@ module.exports = {
         //////////////
         if(eventCurrentRound <= battleEndRound) { 
             command.command_battle(0,userID,userName,messageType,userRole,msg,battleCurrentLifePoints);
+        }
+        if (eventCurrentRound <= raidEndRound) {
+            command.command_raid(0, userID, userName, messageType, userRole, msg, raidCurrentLifePoints);
         }
     }
     

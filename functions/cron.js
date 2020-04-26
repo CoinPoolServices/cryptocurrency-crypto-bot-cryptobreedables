@@ -104,6 +104,25 @@ module.exports = {
         }, config.battle.cron.randomBattleStartTime*1000);
     },
 
+    cron_raid: function () {
+        setInterval(function () {
+            // Check if bot is curently disabled
+            if (botEnabled) {
+                if (!eventActive) {
+                    var raidmonsterHealth = check.check_random_from_to(config.raid.cron.monsterHealth.min, config.raid.cron.monsterHealth.max);
+                    // Auto health
+                    if (config.raid.cron.autoHealth.enabled) {
+                        raidmonsterHealth = raidHealthAuto;
+                    }
+                    command.command_raid(1, config.bot.adminIDs[0], '', 'text', '3', 'raidcron', raidmonsterHealth);
+                    log.log_write_console('cron_raid fired and new raid monster spawned.');
+                } else {
+                    log.log_write_console('cron_raid not fired because event already active.');
+                }
+            }
+        }, config.raid.cron.randomRaidStartTime * 1000);
+    },
+
     /* ------------------------------------------------------------------------------ */
     // Automated shop
     /* ------------------------------------------------------------------------------ */
