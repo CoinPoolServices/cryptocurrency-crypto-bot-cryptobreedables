@@ -61,6 +61,7 @@ module.exports = {
     // Admin commands
     startstop: true,
     battle: true,
+    raid: true,
     destroy: true,
     shop: true,
     summary: true,
@@ -216,6 +217,76 @@ module.exports = {
       itemList: ['egg','box','divineshield','lifeincreasepotion','healpotion','healpotion','healpotion','healpotion','healpotion']
     }
   },
+
+    raid: {
+        cron: {
+            enabled: true,
+            randomBattleStartTime: 1200,
+            monsterHealth: {
+                min: 30000,
+                max: 1000000
+            },
+            autoHealth: {
+                enabled: true,
+                value: 100
+            }
+        },
+        minLifePoints: 0, // Minimum life points a monster must have
+        startRound: 1, // Round number the battle starts with -> normally 0 ;)
+        endRound: 50, // Round numver the battle ends
+        roundTime: 10, // Time in seconds for each round
+        attackIcons: {
+            sword: "698993994318741525"
+        },
+        chatIcons: {
+            sword: "<:sword:698993994318741525>",
+            coins: "<:news24:702172319820546088>",
+            jackpot: "<:jackpot:698993994293706852>",
+            box: "<:box:698993994243244075>",
+            egg: "<:degg:702322745043583066>",
+            divineShield: "<:divineshield:698993994881040476>",
+            lifeIncreasePotion: "<:potion_red:698993994830446729>",
+            healPotion: "<:potion_green:698993994511810620>",
+        },
+        lifeIcons: {
+            fullHeart: "<:hf:698993994293575710>",
+            halfHeart: "<:hh:698993994323197962>",
+            emptyHeart: "<:he:698993993983328368>"
+        },
+        triggerExp: {
+            min: 7,
+            max: 10
+        },
+        triggerFailExp: {
+            min: 2,
+            max: 3
+        },
+        triggerItemExp: {
+            min: 8,
+            max: 12
+        },
+        triggerItemFailExp: {
+            min: 2,
+            max: 3
+        },
+        triggerKillExp: {
+            min: 30,
+            max: 40
+        },
+        victory_img: "victory.png",
+        defense_img: "defense.png",
+        rain: { // Rain to users after each round (values divided by end round count)
+            chance: 10,
+            min: 0.0007,
+            max: 0.01,
+            floating: 8 // Define floating points for min and max value
+        },
+        drop: {
+            chance: 40,
+            itemList: ['egg', 'box', 'divineshield', 'lifeincreasepotion', 'healpotion', 'healpotion', 'healpotion', 'healpotion', 'healpotion']
+        }
+    },
+
   level: {
     chatIcons: {
       levelUp: "<:levelup:698993994276929666>",
@@ -616,7 +687,9 @@ module.exports = {
         startStopTitle: "!cstart / !cstop",
         startStopValue: "Enable/Disable cryptobreedables bot commands while the bot is running.",
         battleTitle: "!battle <monster life points>",
-        battleValue: "Start a new monster battle.",
+          battleValue: "Start a new monster battle.",
+          raidTitle: "!raid <raid life points>",
+          raidValue: "Start a new raid.",
         destroyTitle: "!destroy",
         destroyValue: "Destroy current monster battle.",
         killTitle: "!kill",
@@ -770,6 +843,65 @@ module.exports = {
         success3: "."
       }
     },
+
+      raid: {
+          minLifePoints: ", the monster must have at least",
+          minLifePoints2: "life points for the fight.",
+          title: "Monster Card",
+          lifePoints: "Life points",
+          round: "Round",
+          description: "The fight begins. Click on the sword emoji icon under the picture to attack.",
+          active: ", please wait until the active event has ended before you start a new one.",
+          attackHit: ", you attacked the monster and reduced the life points by",
+          attackCrit: "(critical ",
+          attackCrit2: "x",
+          attackCrit3: ")",
+          attackMiss: ", you missed the monster",
+          attackItemHit: "Your",
+          attackItemHit2: "attacked the monster",
+          attackItemHit3: "with",
+          attackItemHit4: "and reduced the life points by",
+          attackItemCrit: "(critical ",
+          attackItemCrit2: "x",
+          attackItemCrit3: ")",
+          attackItemMiss: "missed the monster",
+          exp: "EXP",
+          textEnd: ".",
+          dead: ", you are dead and can not attack. Use !rez to",
+          dead2: "revive yourself.",
+          log: {
+              action: "Battle",
+              user: "User:",
+              win: "Game win",
+              loss: "Game loss",
+              start: "Game start",
+              rain: "Rain",
+              rainjackpot: "Rain Jackpot",
+              drop: "Drop",
+          },
+          rain: {
+              success: "Raining",
+              success1: "on",
+              success2: "participating users of the previous round,",
+              success3: "each."
+          },
+          drop: {
+              success: ", the bot droped a free item for you.",
+              success1: "got credited.",
+              box: "Box",
+              divineShield: "Divine shield",
+              lifeIncreasePotion: "Life increase potion",
+              healPotion: "Heal potion",
+              egg: "Egg",
+          },
+          jackpot: {
+              success: "Added",
+              success1: "to the jackpot.",
+              success2: "New value is",
+              success3: "."
+          }
+      },
+
     level: {
       levelUp: ", congratulations! You have reached level",
       itemLevelUp: ", congratulations! Your",

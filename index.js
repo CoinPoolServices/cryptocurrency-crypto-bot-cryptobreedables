@@ -47,6 +47,16 @@ global.battleStartRound = config.battle.startRound;
 global.battleEndRound = config.battle.endRound;
 global.battleMonsterImage = 'monster1.jpg';
 global.battleHealthAuto = config.battle.cron.monsterHealth.min;
+/* Raid globals */
+global.raidStartLifePoints = 0;
+global.raidCurrentLifePoints = 0;
+global.raidCurrentLifePointsPercentage = 100;
+global.raidCurrentLifeDisplay = '';
+global.raidRoundTime = config.raid.roundTime;
+global.raidStartRound = config.raid.startRound;
+global.raidEndRound = config.raid.endRound;
+global.raidMonsterImage = 'monster1.jpg';
+global.raidHealthAuto = config.raid.cron.monsterHealth.min;
 /* Shop globals */ // Fallback -> gets overwritten in shop function
 global.shopRoundTime = 10; 
 global.shopEndRound = 3; // gets overwritten in function
@@ -197,7 +207,10 @@ if(config.ftpupload.enabled) // FTP upload cron
   cron.cron_upload_game_data();
 
 if(config.battle.cron.enabled) // automated monsters
-  cron.cron_battle();
+    cron.cron_battle();
+
+if (config.raid.cron.enabled) // automated raid boss
+    cron.cron_raid();
 
 if(config.shop.cron.enabled) // automated shops
   cron.cron_shop();
