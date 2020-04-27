@@ -359,6 +359,25 @@ module.exports = {
       numberTo: 14
     }
     },
+
+    raidmonster: {
+        triggerChance: 3,
+        triggerDamage: {
+            min: 30000,
+            max: 1000000
+        },
+        chatIcons: {
+            fullHeart: "<:hf:698993994293575710>",
+            blood: "<:blood:698993994205626428>",
+            dead: "<:dead:698993994046373929>"
+        },
+        img: {
+            name: "raidmonster",
+            numberFrom: 1,
+            numberTo: 2
+        }
+    },
+
   items:{
     dragon: {
       name: 'Dragon',

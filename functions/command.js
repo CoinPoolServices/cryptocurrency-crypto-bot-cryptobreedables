@@ -156,6 +156,78 @@ module.exports = {
         });
         return;
     },  
+
+    command_raid: function (manuallyFired, userID, userName, messageType, userRole, msg, partTwo) {
+        // Private message not allowed
+        if (messageType === 'dm') {
+            chat.chat_reply(msg, 'embed', userName, messageType, config.colors.error, false, config.messages.title.error, false, config.messages.private, false, false, false, false);
+            return;
+        }
+        // Check if user is allowed to fire the command
+        if (userRole < 2 && manuallyFired) { // mods are allowed to start battles
+            //msg,replyType,replyUsername,senderMessageType,replyEmbedColor,replyAuthor,replyTitle,replyFields,replyDescription,replyFooter,replyThumbnail,replyImage,replyTimestamp
+            chat.chat_reply(msg, 'embed', userName, messageType, config.colors.error, false, config.messages.title.error, false, config.messages.notAllowedCommand, false, false, false, false);
+            return;
+        }
+        // Check if value is given, is numeric, is not out of int range
+        if (!partTwo || !check.check_isNumeric(partTwo) || check.check_out_of_int_range(partTwo)) {
+            //msg,replyType,replyUsername,senderMessageType,replyEmbedColor,replyAuthor,replyTitle,replyFields,replyDescription,replyFooter,replyThumbnail,replyImage,replyTimestamp
+            chat.chat_reply(msg, 'embed', userName, messageType, config.colors.error, false, config.messages.title.error, false, config.messages.notValidCommand, false, false, false, false);
+            return;
+        }
+        // Set value BigInt and from minus to plus if its negative
+        partTwo = Math.abs(partTwo).toFixed();
+        // Check if min lifepoints are set 
+        if (partTwo < config.battle.minLifePoints) {
+            chat.chat_reply(msg, 'embed', userName, messageType, config.colors.error, false, config.messages.title.error, false, config.messages.battle.minLifePoints + " " + config.battle.minLifePoints + " " + config.messages.battle.minLifePoints2, false, false, false, false);
+            return;
+        }
+        // Check if currently active event is running
+        if (eventActive) {
+            chat.chat_reply(msg, 'embed', userName, messageType, config.colors.error, false, config.messages.title.warning, false, config.messages.battle.active, false, false, false, false);
+            return;
+        }
+        // If event not active and manually fired reset round count and first start life value
+        if (!eventActive && manuallyFired) {
+
+            // Mention warrior group if enabled
+            if (config.commands.mention) {
+                try {
+                    chat.chat_reply(msg, 'normal', false, messageType, false, false, false, false, '<@&' + config.bot.mentionGroup + '>', false, false, false, false);
+                } catch (error) {
+                }
+            }
+
+            eventCurrentRound = battleStartRound;
+            battleStartLifePoints = partTwo;
+            battleCurrentLifePoints = partTwo;
+            log.log_write_game(config.messages.battle.log.action, config.messages.battle.log.user + ' ' + userName + ' - ' + config.messages.battle.log.start + ' ' + partTwo);
+        }
+        // Caluclate life display from global vars
+        battleCurrentLifeDisplay = '';
+        event.event_life_display(battleCurrentLifePoints);
+        // Set global eventActive
+        eventActive = true;
+        eventName = "battle";
+        // Set start round or current round
+        if (eventCurrentRound > battleEndRound)
+            eventCurrentRound = battleStartRound
+        // Create monster image if manually fired
+        var monsterImage = '';
+        if (manuallyFired) {
+            var monsterNumber = check.check_random_from_to(config.monster.img.numberFrom, config.monster.img.numberTo);
+            battleMonsterImage = config.monster.img.name + monsterNumber + '.jpg';
+        }
+        monsterImage = battleMonsterImage;
+        // Create the monster message and start the event
+        //msg,replyType,replyUsername,senderMessageType,replyEmbedColor,replyAuthor,replyTitle,replyFields,replyDescription,replyFooter,replyThumbnail,replyImage,replyTimestamp
+        chat.chat_reply(msg, 'embed', false, messageType, config.colors.special, false, config.messages.battle.title + ' ' + battleCurrentLifeDisplay, [[config.messages.battle.lifePoints, '```' + partTwo + '```', true], [config.messages.battle.round, '```' + eventCurrentRound + '/' + config.battle.endRound + '```', true]], config.messages.battle.description, false, false, monsterImage, false).then(function (reactCollectorMessage) {
+            // Save message to global eventCollectorMessage
+            eventCollectorMessage = reactCollectorMessage;
+            event.event_battle_build(eventCollectorMessage, userID, userName, messageType, userRole, msg);
+        });
+        return;
+    }, 
     
     /* ------------------------------------------------------------------------------ */
     // !cversion -> Get current bot and wallet infos

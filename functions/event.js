@@ -1079,7 +1079,7 @@ module.exports = {
 
         //////////////////////////////////////////////////////////////////////////////////////////
         // Monster attack - Check if monster trigger or fail to attack user
-        var checkTriggerMonster = check.check_chance_bool(config.monster.triggerChance);
+        var checkTriggerMonster = check.check_chance_bool(config.monster.triggerChance || config.raidmonster.triggerChance);
         if(checkTriggerMonster){
             
             //////////////////////////////////////////////////////////////////////////////////////////
@@ -1274,7 +1274,7 @@ module.exports = {
             return;  
         }
         // Calculate new exp and credite user with exp from miss fight
-        var triggerDamage = check.check_random_from_to(config.monster.triggerDamage.min,config.monster.triggerDamage.max);
+        var triggerDamage = check.check_random_from_to(config.monster.triggerDamage.min, config.monster.triggerDamage.max || config.raidmonster.triggerDamage.min, config.raidmonster.triggerDamage.max);
         var newHealth = new Big(userhealth).minus(triggerDamage);
         // Write new exp
         var writeNewHealth = await storage.storage_write_local_storage(reactUser,'games.cryptobreedables.health',newHealth); 
