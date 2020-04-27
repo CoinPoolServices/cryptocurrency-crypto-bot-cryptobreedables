@@ -12,12 +12,12 @@ module.exports = {
     gameLoggingZipOldLogs: true, // After reaching max file zip old logs
     commandPrefix: "+", // Bot prefix to trigger the bot <- if symbol changed it needs to get allowed on check.js
     cooldownTime: 5, // Cooldown a user need to wait between commands in seconds
-    coinName: "News24",
-    coinSymbol: "News24", // e.g. BTC
+    coinName: "XXX",
+    coinSymbol: "XXX", // e.g. BTC
     botID: "XXX", // Bot ID - important else it react to own messages -> SAME AS FOR BASE BOT!
     adminIDs: ["XXX"], // This users IDs are able to use admin commands and bypass cooldowns -> SAME AS FOR BASE BOT!
     moderatorIDs: ["XXX","XXX"], // This users IDs are able to use moderator commands and bypass cooldowns
-    vipGroupName: "News24 VIP", // This Group users are able to use vip commands and bypass cooldowns
+    vipGroupName: "XXX VIP", // This Group users are able to use vip commands and bypass cooldowns
     mentionGroup: "XXX", // Users joining this group (DISCORD GROUP ID) by command get mentioned on bot fights if mention command is enabled
     respondChannelIDs: ["XXX"], // Discord server channels IDs the bot does listen to and spawns battles and shops
     allowDM: true, // Allow or disable direct messages for commands to the bot with true or false
@@ -400,7 +400,7 @@ module.exports = {
       },
       attacks: [["Claws cut","<:claws:698993994260021408>"]],
       chatIcons: {
-        dragon: "<:cbdragon:698993994495033384>"
+          dragon: "<:coredragon:704047434472489001>"
       }
     },
     reddragon: {
